@@ -121,15 +121,16 @@ export default function Home() {
       </section>
 
       <section className="panel">
-        <h3>Start Monitoring Wizard</h3>
-        <table>
+        <h3>One-Click Agent Setup</h3>
+        <div className="tiny">User ko bas Download karke script run karna hai. Script auto API se connect ho jayegi.</div>
+        <div style={{ marginTop: 10 }}>
+          <a href="/api/download-agent" className="download-btn">Download Agent</a>
+        </div>
+        <table style={{ marginTop: 12 }}>
           <thead><tr><th>Step</th><th>Action</th></tr></thead>
           <tbody>
-            <tr><td>1</td><td>Download project agent files to the monitored Windows machine.</td></tr>
-            <tr><td>2</td><td>Open <code>config/agent.json</code> and set your deployed website URL.</td></tr>
-            <tr><td>3</td><td>Set <code>watch_paths</code> to folders you want to monitor.</td></tr>
-            <tr><td>4</td><td>Run command: <code>python src/local_agent.py --config config/agent.json</code></td></tr>
-            <tr><td>5</td><td>Perform file actions (create/edit/move/delete). Dashboard updates automatically.</td></tr>
+            <tr><td>1</td><td>Download <code>sftms-agent.ps1</code></td></tr>
+            <tr><td>2</td><td>Right click PowerShell script and run. Monitoring starts automatically.</td></tr>
           </tbody>
         </table>
       </section>
