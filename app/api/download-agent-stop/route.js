@@ -9,26 +9,39 @@ set "TASK_NAME=SFTMS-Agent"
 set "AGENT_DIR=%APPDATA%\\SFTMSAgent"
 set "AGENT_PS1=%AGENT_DIR%\\agent-runner.ps1"
 set "STOP_FLAG=%AGENT_DIR%\\stop.flag"
+set "STOP_FLAG_GLOBAL=%PROGRAMDATA%\\SFTMSAgent.stop"
 
 if not exist "%AGENT_DIR%" mkdir "%AGENT_DIR%"
 echo stop>"%STOP_FLAG%"
+echo stop>"%STOP_FLAG_GLOBAL%"
 
+echo [1/4] Stopping scheduled tasks...
+for /f "tokens=1,* delims=," %%A in ('schtasks /Query /FO CSV ^| findstr /I "SFTMS-Agent"') do (
+  schtasks /End /TN %%~B >nul 2>nul
+  schtasks /Delete /F /TN %%~B >nul 2>nul
+)
 schtasks /End /TN "%TASK_NAME%" >nul 2>nul
 schtasks /End /TN "%TASK_NAME%-Boot" >nul 2>nul
 
 schtasks /Delete /F /TN "%TASK_NAME%" >nul 2>nul
 schtasks /Delete /F /TN "%TASK_NAME%-Boot" >nul 2>nul
 
-for /f "tokens=2 delims=," %%P in ('tasklist /v /fo csv ^| findstr /i "powershell.exe"') do (
-  rem keep loop safe; we only stop hidden agent launched from APPDATA path below
-)
-
+echo [2/4] Killing running agent processes...
 powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
-"Get-CimInstance Win32_Process | Where-Object { $_.Name -eq 'powershell.exe' -and $_.CommandLine -match 'SFTMSAgent\\\\agent-runner.ps1' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }" >nul 2>nul
+"Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'powershell.exe|pwsh.exe' -and ($_.CommandLine -match 'SFTMSAgent\\\\agent-runner.ps1' -or $_.CommandLine -match '/api/events') } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }" >nul 2>nul
 
+echo [3/4] Removing local runner...
 if exist "%AGENT_PS1%" del /f /q "%AGENT_PS1%" >nul 2>nul
 
-echo SFTMS Agent stopped and startup tasks removed.
+echo [4/4] Verification...
+schtasks /Query /FO LIST | findstr /I "SFTMS-Agent" >nul
+if %errorlevel%==0 (
+  echo WARNING: Some scheduled tasks may still exist. Run this tool as Administrator once.
+) else (
+  echo OK: No SFTMS scheduled tasks found.
+)
+
+echo SFTMS Agent fully stopped. It will not auto-restart until installer is run again.
 pause
 `;
 
