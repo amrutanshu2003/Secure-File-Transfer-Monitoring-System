@@ -10,15 +10,19 @@ setlocal EnableDelayedExpansion
 set "AGENT_DIR=%APPDATA%\\SFTMSAgent"
 set "AGENT_PS1=%AGENT_DIR%\\agent-runner.ps1"
 set "STOP_FLAG=%AGENT_DIR%\\stop.flag"
+set "STOP_FLAG_GLOBAL=%PROGRAMDATA%\\SFTMSAgent.stop"
 set "TASK_NAME=SFTMS-Agent"
 if not exist "%AGENT_DIR%" mkdir "%AGENT_DIR%"
 if exist "%STOP_FLAG%" del /f /q "%STOP_FLAG%" >nul 2>nul
+if exist "%STOP_FLAG_GLOBAL%" del /f /q "%STOP_FLAG_GLOBAL%" >nul 2>nul
 
 > "%AGENT_PS1%" (
   echo $ErrorActionPreference = "SilentlyContinue"
   echo $agentDir = Join-Path $env:APPDATA "SFTMSAgent"
   echo $stopFlag = Join-Path $agentDir "stop.flag"
+  echo $stopFlagGlobal = "C:\\ProgramData\\SFTMSAgent.stop"
   echo if ^(Test-Path $stopFlag^) { exit 0 }
+  echo if ^(Test-Path $stopFlagGlobal^) { exit 0 }
   echo $apiUrl = "${apiUrl}"
   echo $username = $env:USERNAME
   echo $hostname = $env:COMPUTERNAME
@@ -53,6 +57,7 @@ if exist "%STOP_FLAG%" del /f /q "%STOP_FLAG%" >nul 2>nul
   echo }
   echo while ^($true^) {
   echo   if ^(Test-Path $stopFlag^) { break }
+  echo   if ^(Test-Path $stopFlagGlobal^) { break }
   echo   Start-Sleep -Seconds 2
   echo }
 )
