@@ -28,9 +28,13 @@ schtasks /Delete /F /TN "%TASK_NAME%-Boot" >nul 2>nul
 
 echo [2/4] Killing running agent processes...
 powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
-"Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'powershell.exe|pwsh.exe' -and ($_.CommandLine -match 'SFTMSAgent\\\\agent-runner.ps1' -or $_.CommandLine -match '/api/events') } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }" >nul 2>nul
-powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
-"Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'python.exe|pythonw.exe' -and ($_.CommandLine -match 'local_agent.py' -or $_.CommandLine -match 'config/agent.json') } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }" >nul 2>nul
+"for($i=0;$i -lt 6;$i++){ ^
+  Get-CimInstance Win32_Process ^| Where-Object { ^
+    $_.Name -match 'powershell.exe|pwsh.exe|python.exe|pythonw.exe' -and ^
+    ($_.CommandLine -match 'SFTMSAgent\\\\agent-runner.ps1' -or $_.CommandLine -match '/api/events' -or $_.CommandLine -match 'local_agent.py' -or $_.CommandLine -match 'config/agent.json' -or $_.CommandLine -match 'sftms-agent') ^
+  } ^| ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }; ^
+  Start-Sleep -Milliseconds 250 ^
+}" >nul 2>nul
 
 echo [3/4] Removing local runner...
 if exist "%AGENT_PS1%" del /f /q "%AGENT_PS1%" >nul 2>nul
@@ -41,6 +45,14 @@ if %errorlevel%==0 (
   echo WARNING: Some scheduled tasks may still exist. Run this tool as Administrator once.
 ) else (
   echo OK: No SFTMS scheduled tasks found.
+)
+
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
+"$left = Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'powershell.exe|pwsh.exe|python.exe|pythonw.exe' -and ($_.CommandLine -match 'SFTMSAgent\\\\agent-runner.ps1' -or $_.CommandLine -match '/api/events' -or $_.CommandLine -match 'local_agent.py' -or $_.CommandLine -match 'config/agent.json' -or $_.CommandLine -match 'sftms-agent') }; if($left){ exit 1 } else { exit 0 }" >nul 2>nul
+if %errorlevel%==0 (
+  echo OK: Agent processes terminated instantly.
+) else (
+  echo WARNING: Some agent process is still alive. Run this tool as Administrator.
 )
 
 echo SFTMS Agent fully stopped. The agent will remain stopped even after you close the CMD window.
