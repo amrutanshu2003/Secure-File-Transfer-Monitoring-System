@@ -97,6 +97,12 @@ Download flow:
 - `GET /api/download-agent-exe`
 - If DB binary exists, it serves that first.
 
+Local upload helper:
+```powershell
+$env:AGENT_UPLOAD_KEY="your_secret"
+powershell -ExecutionPolicy Bypass -File scripts\upload-agent-exe.ps1 -ApiBaseUrl "https://secure-file-transfer-monitoring.vercel.app" -FilePath "C:\path\to\SFTMSAgentSetup.exe" -Version "1.0.0"
+```
+
 ## Production Integration (Recommended)
 If you want truly automatic endpoint hits on real machine file changes:
 - Run the included local agent from a Windows machine.
