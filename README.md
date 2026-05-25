@@ -72,7 +72,7 @@ Output file:
 Optional direct download setup:
 - Set environment variable `AGENT_EXE_URL` in Vercel to a direct hosted `.exe` link.
 - Dashboard `Download Agent EXE` button will use that URL.
-- If not set, it opens the GitHub Actions workflow page.
+- If not set, it falls back to `/downloads/SFTMSAgentSetup.exe`.
 
 ## Production Integration (Recommended)
 If you want truly automatic endpoint hits on real machine file changes:
