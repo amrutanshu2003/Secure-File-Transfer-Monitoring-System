@@ -26,16 +26,23 @@ jobs:
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "installer\SFTMSAgentSetup.iss"
 
       - name: Sign Installer (optional)
-        if: ${{ secrets.WIN_CERT_BASE64 != '' && secrets.WIN_CERT_PASSWORD != '' }}
         shell: pwsh
+        env:
+          WIN_CERT_BASE64: ${{ secrets.WIN_CERT_BASE64 }}
+          WIN_CERT_PASSWORD: ${{ secrets.WIN_CERT_PASSWORD }}
         run: |
+          if ([string]::IsNullOrWhiteSpace($env:WIN_CERT_BASE64) -or [string]::IsNullOrWhiteSpace($env:WIN_CERT_PASSWORD)) {
+            Write-Host "Signing skipped: WIN_CERT_BASE64/WIN_CERT_PASSWORD not set."
+            exit 0
+          }
+
           $pfxPath = Join-Path $env:RUNNER_TEMP "codesign.pfx"
-          [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String("${{ secrets.WIN_CERT_BASE64 }}"))
+          [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String($env:WIN_CERT_BASE64))
 
           $signtool = Get-ChildItem "C:\Program Files (x86)\Windows Kits" -Recurse -Filter signtool.exe -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
           if (-not $signtool) { throw "signtool.exe not found" }
 
-          & $signtool sign /f $pfxPath /p "${{ secrets.WIN_CERT_PASSWORD }}" /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "installer\output\SFTMSAgentSetup.exe"
+          & $signtool sign /f $pfxPath /p $env:WIN_CERT_PASSWORD /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "installer\output\SFTMSAgentSetup.exe"
 
       - name: Upload Installer Artifact
         uses: actions/upload-artifact@v4
