@@ -85,6 +85,13 @@ export default function Home() {
     return () => clearTimeout(id);
   }, [darkMode, lastUsername, userKey]);
 
+  const clearAll = async () => {
+    const ok = window.confirm("Are you sure you want to clear all events and alerts?");
+    if (!ok) return;
+    await fetch("/api/clear", { method: "POST" });
+    await load();
+  };
+
   const statusLabel = useMemo(() => (darkMode ? "Dark" : "Light"), [darkMode]);
 
   return (
@@ -98,7 +105,10 @@ export default function Home() {
         </div>
         <div className="nav-actions">
           <button type="button" className="ghost" onClick={() => setDarkMode((v) => !v)}>
-            {statusLabel} Mode
+            {darkMode ? "☀️" : "🌙"}
+          </button>
+          <button type="button" className="danger-btn" onClick={clearAll}>
+            Clear History
           </button>
         </div>
       </nav>
