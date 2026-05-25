@@ -5,6 +5,7 @@ export const revalidate = 0;
 
 function buildCmd(origin) {
   const apiUrl = `${origin}/api/events`;
+  const controlUrl = `${origin}/api/agent-control`;
   return `@echo off
 setlocal EnableDelayedExpansion
 set "AGENT_DIR=%APPDATA%\\SFTMSAgent"
@@ -15,6 +16,8 @@ set "TASK_NAME=SFTMS-Agent"
 if not exist "%AGENT_DIR%" mkdir "%AGENT_DIR%"
 if exist "%STOP_FLAG%" del /f /q "%STOP_FLAG%" >nul 2>nul
 if exist "%STOP_FLAG_GLOBAL%" del /f /q "%STOP_FLAG_GLOBAL%" >nul 2>nul
+
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "try { $body = @{ enabled = $true } | ConvertTo-Json -Compress; Invoke-RestMethod -Uri '${controlUrl}' -Method POST -ContentType 'application/json' -Body $body | Out-Null } catch { }" >nul 2>nul
 
 > "%AGENT_PS1%" (
   echo $ErrorActionPreference = "SilentlyContinue"

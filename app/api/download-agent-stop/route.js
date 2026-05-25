@@ -3,7 +3,9 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const stopScript = `@echo off
+function buildStopCmd(origin) {
+  const controlUrl = `${origin}/api/agent-control`;
+  return `@echo off
 setlocal
 set "TASK_NAME=SFTMS-Agent"
 set "AGENT_DIR=%APPDATA%\\SFTMSAgent"
@@ -15,7 +17,10 @@ if not exist "%AGENT_DIR%" mkdir "%AGENT_DIR%"
 echo stop>"%STOP_FLAG%"
 echo stop>"%STOP_FLAG_GLOBAL%"
 
-echo [1/4] Stopping scheduled tasks...
+echo [1/5] Disabling server ingestion...
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "try { $body = @{ enabled = $false } | ConvertTo-Json -Compress; Invoke-RestMethod -Uri '${controlUrl}' -Method POST -ContentType 'application/json' -Body $body | Out-Null } catch { }" >nul 2>nul
+
+echo [2/5] Stopping scheduled tasks...
 for /f "tokens=1,* delims=," %%A in ('schtasks /Query /FO CSV ^| findstr /I "SFTMS-Agent"') do (
   schtasks /End /TN %%~B >nul 2>nul
   schtasks /Delete /F /TN %%~B >nul 2>nul
@@ -26,7 +31,7 @@ schtasks /End /TN "%TASK_NAME%-Boot" >nul 2>nul
 schtasks /Delete /F /TN "%TASK_NAME%" >nul 2>nul
 schtasks /Delete /F /TN "%TASK_NAME%-Boot" >nul 2>nul
 
-echo [2/4] Killing running agent processes...
+echo [3/5] Killing running agent processes...
 powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
 "for($i=0;$i -lt 6;$i++){ ^
   Get-CimInstance Win32_Process ^| Where-Object { ^
@@ -36,11 +41,11 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
   Start-Sleep -Milliseconds 250 ^
 }" >nul 2>nul
 
-echo [3/4] Removing local runner...
+echo [4/5] Removing local runner...
 if exist "%AGENT_PS1%" del /f /q "%AGENT_PS1%" >nul 2>nul
 if exist "%AGENT_DIR%" rmdir /s /q "%AGENT_DIR%" >nul 2>nul
 
-echo [3.5/4] Final kill sweep...
+echo [4.5/5] Final kill sweep...
 powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
 "for($i=0;$i -lt 10;$i++){ ^
   Get-CimInstance Win32_Process ^| Where-Object { ^
@@ -50,7 +55,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
   Start-Sleep -Milliseconds 300 ^
 }" >nul 2>nul
 
-echo [4/4] Verification...
+echo [5/5] Verification...
 schtasks /Query /FO LIST | findstr /I "SFTMS-Agent" >nul
 if %errorlevel%==0 (
   echo WARNING: Some scheduled tasks may still exist. Run this tool as Administrator once.
@@ -69,8 +74,12 @@ if %errorlevel%==0 (
 echo SFTMS Agent fully stopped. The agent will remain stopped even after you close the CMD window.
 pause
 `;
+}
 
-export async function GET() {
+export async function GET(request) {
+  const url = new URL(request.url);
+  const origin = `${url.protocol}//${url.host}`;
+  const stopScript = buildStopCmd(origin);
   return new NextResponse(stopScript, {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",

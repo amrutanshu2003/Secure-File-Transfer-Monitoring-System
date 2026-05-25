@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
-import { evaluateViolations, initDb } from "@/lib/db";
+import { evaluateViolations, initDb, isAgentEnabled } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -19,6 +19,11 @@ export async function GET() {
 
 export async function POST(request) {
   await initDb();
+  const enabled = await isAgentEnabled();
+  if (!enabled) {
+    return NextResponse.json({ ok: false, disabled: true }, { status: 202 });
+  }
+
   const body = await request.json();
   const action_type = body.action_type || "modified";
   const file_name = body.file_name || "unknown.txt";
