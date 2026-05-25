@@ -29,6 +29,8 @@ schtasks /Delete /F /TN "%TASK_NAME%-Boot" >nul 2>nul
 echo [2/4] Killing running agent processes...
 powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
 "Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'powershell.exe|pwsh.exe' -and ($_.CommandLine -match 'SFTMSAgent\\\\agent-runner.ps1' -or $_.CommandLine -match '/api/events') } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }" >nul 2>nul
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
+"Get-CimInstance Win32_Process | Where-Object { $_.Name -match 'python.exe|pythonw.exe' -and ($_.CommandLine -match 'local_agent.py' -or $_.CommandLine -match 'config/agent.json') } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force }" >nul 2>nul
 
 echo [3/4] Removing local runner...
 if exist "%AGENT_PS1%" del /f /q "%AGENT_PS1%" >nul 2>nul
@@ -41,7 +43,7 @@ if %errorlevel%==0 (
   echo OK: No SFTMS scheduled tasks found.
 )
 
-echo SFTMS Agent fully stopped. It will not auto-restart until installer is run again.
+echo SFTMS Agent fully stopped. The agent will remain stopped even after you close the CMD window.
 pause
 `;
 
