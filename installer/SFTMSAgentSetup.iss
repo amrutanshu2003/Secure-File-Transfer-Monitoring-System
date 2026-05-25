@@ -22,6 +22,8 @@ UninstallDisplayName=SFTMS Agent
 VersionInfoVersion={#MyAppVersion}
 VersionInfoCompany={#MyAppPublisher}
 VersionInfoDescription=Secure File Transfer Monitoring System Agent
+WizardImageFile=assets\wizard-left.bmp
+WizardSmallImageFile=assets\wizard-small.bmp
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
