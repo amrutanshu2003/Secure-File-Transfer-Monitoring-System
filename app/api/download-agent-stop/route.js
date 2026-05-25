@@ -31,13 +31,24 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
 "for($i=0;$i -lt 6;$i++){ ^
   Get-CimInstance Win32_Process ^| Where-Object { ^
     $_.Name -match 'powershell.exe|pwsh.exe|python.exe|pythonw.exe' -and ^
-    ($_.CommandLine -match 'SFTMSAgent\\\\agent-runner.ps1' -or $_.CommandLine -match '/api/events' -or $_.CommandLine -match 'local_agent.py' -or $_.CommandLine -match 'config/agent.json' -or $_.CommandLine -match 'sftms-agent') ^
+    ($_.CommandLine -match 'SFTMSAgent\\\\agent-runner.ps1' -or $_.CommandLine -match '/api/events' -or $_.CommandLine -match 'local_agent.py' -or $_.CommandLine -match 'config/agent.json' -or $_.CommandLine -match 'sftms-agent' -or $_.CommandLine -match 'Secure File Transfer Monitoring System') ^
   } ^| ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }; ^
   Start-Sleep -Milliseconds 250 ^
 }" >nul 2>nul
 
 echo [3/4] Removing local runner...
 if exist "%AGENT_PS1%" del /f /q "%AGENT_PS1%" >nul 2>nul
+if exist "%AGENT_DIR%" rmdir /s /q "%AGENT_DIR%" >nul 2>nul
+
+echo [3.5/4] Final kill sweep...
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ^
+"for($i=0;$i -lt 10;$i++){ ^
+  Get-CimInstance Win32_Process ^| Where-Object { ^
+    $_.Name -match 'powershell.exe|pwsh.exe|python.exe|pythonw.exe' -and ^
+    ($_.CommandLine -match 'SFTMSAgent' -or $_.CommandLine -match 'local_agent.py' -or $_.CommandLine -match '/api/events' -or $_.CommandLine -match 'config/agent.json' -or $_.CommandLine -match 'Secure File Transfer Monitoring System') ^
+  } ^| ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }; ^
+  Start-Sleep -Milliseconds 300 ^
+}" >nul 2>nul
 
 echo [4/4] Verification...
 schtasks /Query /FO LIST | findstr /I "SFTMS-Agent" >nul
