@@ -140,14 +140,13 @@ export default function Home() {
         <div className="tiny">Download EXE and run once. The agent installs, starts in the background, and auto-runs at startup.</div>
         <div style={{ marginTop: 10 }}>
           <a href="/api/download-agent" className="download-btn">Download Agent</a>
-          <a href="/api/download-agent-stop" className="download-btn stop-btn">Download Stop Agent Tool</a>
         </div>
         <table style={{ marginTop: 12 }}>
           <thead><tr><th>Step</th><th>Action</th></tr></thead>
           <tbody>
             <tr><td>1</td><td>Download Agent EXE.</td></tr>
             <tr><td>2</td><td>Run installer once. Monitoring starts automatically in background.</td></tr>
-            <tr><td>3</td><td>If needed, run the Stop Agent Tool to disable monitoring tasks.</td></tr>
+            <tr><td>3</td><td>Verify events and alerts are updating in real time on the dashboard.</td></tr>
           </tbody>
         </table>
       </section>
