@@ -121,16 +121,17 @@ export default function Home() {
       </section>
 
       <section className="panel">
-        <h3>Live Monitoring Setup</h3>
-        <div className="tiny">Run local agent on monitored machine:</div>
-        <textarea
-          className="config-box"
-          readOnly
-          value={`python src/local_agent.py --config config/agent.json`}
-        />
-        <div className="tiny" style={{ marginTop: 8 }}>
-          Current preferred username: {lastUsername || "not set"}
-        </div>
+        <h3>Start Monitoring Wizard</h3>
+        <table>
+          <thead><tr><th>Step</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Download project agent files to the monitored Windows machine.</td></tr>
+            <tr><td>2</td><td>Open <code>config/agent.json</code> and set your deployed website URL.</td></tr>
+            <tr><td>3</td><td>Set <code>watch_paths</code> to folders you want to monitor.</td></tr>
+            <tr><td>4</td><td>Run command: <code>python src/local_agent.py --config config/agent.json</code></td></tr>
+            <tr><td>5</td><td>Perform file actions (create/edit/move/delete). Dashboard updates automatically.</td></tr>
+          </tbody>
+        </table>
       </section>
 
       <section className="panel">
