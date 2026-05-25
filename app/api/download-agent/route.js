@@ -9,11 +9,16 @@ function buildCmd(origin) {
 setlocal EnableDelayedExpansion
 set "AGENT_DIR=%APPDATA%\\SFTMSAgent"
 set "AGENT_PS1=%AGENT_DIR%\\agent-runner.ps1"
+set "STOP_FLAG=%AGENT_DIR%\\stop.flag"
 set "TASK_NAME=SFTMS-Agent"
 if not exist "%AGENT_DIR%" mkdir "%AGENT_DIR%"
+if exist "%STOP_FLAG%" del /f /q "%STOP_FLAG%" >nul 2>nul
 
 > "%AGENT_PS1%" (
   echo $ErrorActionPreference = "SilentlyContinue"
+  echo $agentDir = Join-Path $env:APPDATA "SFTMSAgent"
+  echo $stopFlag = Join-Path $agentDir "stop.flag"
+  echo if ^(Test-Path $stopFlag^) { exit 0 }
   echo $apiUrl = "${apiUrl}"
   echo $username = $env:USERNAME
   echo $hostname = $env:COMPUTERNAME
@@ -46,7 +51,10 @@ if not exist "%AGENT_DIR%" mkdir "%AGENT_DIR%"
   echo   Register-ObjectEvent $w Renamed -Action { Send-Event "moved" $Event.SourceEventArgs.OldFullPath $Event.SourceEventArgs.FullPath } ^| Out-Null
   echo   $watchers += $w
   echo }
-  echo while ^($true^) { Start-Sleep -Seconds 2 }
+  echo while ^($true^) {
+  echo   if ^(Test-Path $stopFlag^) { break }
+  echo   Start-Sleep -Seconds 2
+  echo }
 )
 
 schtasks /Create /F /SC ONLOGON /TN "%TASK_NAME%" /TR "powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File ""%AGENT_PS1%""" >nul 2>nul
