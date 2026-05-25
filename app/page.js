@@ -23,9 +23,6 @@ export default function Home() {
   const [alerts, setAlerts] = useState([]);
   const [darkMode, setDarkMode] = useState(true);
   const [userKey, setUserKey] = useState("");
-  const [folders, setFolders] = useState([]);
-  const [folderInput, setFolderInput] = useState("");
-  const [agentConfigText, setAgentConfigText] = useState("");
   const [form, setForm] = useState({
     action_type: "modified",
     file_name: "",
@@ -58,18 +55,6 @@ export default function Home() {
     });
   };
 
-  const loadFolders = async (key) => {
-    if (!key) return;
-    const list = await fetch(`/api/folders?userKey=${encodeURIComponent(key)}`, { cache: "no-store" }).then((r) => r.json());
-    setFolders(list);
-  };
-
-  const loadAgentConfig = async (key) => {
-    if (!key) return;
-    const cfg = await fetch(`/api/agent-config?userKey=${encodeURIComponent(key)}`, { cache: "no-store" }).then((r) => r.json());
-    setAgentConfigText(JSON.stringify(cfg, null, 2));
-  };
-
   useEffect(() => {
     const k = getUserKey();
     setUserKey(k);
@@ -82,8 +67,6 @@ export default function Home() {
       const isDark = (pref.theme || "dark") === "dark";
       setDarkMode(isDark);
       setForm((v) => ({ ...v, username: pref.last_username || "" }));
-      await loadFolders(userKey);
-      await loadAgentConfig(userKey);
     })();
   }, [userKey]);
 
@@ -126,34 +109,6 @@ export default function Home() {
     await load();
   };
 
-  const addFolder = async () => {
-    if (!folderInput.trim() || !userKey) return;
-    await fetch("/api/folders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userKey, folder_path: folderInput.trim() })
-    });
-    setFolderInput("");
-    await loadFolders(userKey);
-    await loadAgentConfig(userKey);
-  };
-
-  const removeFolder = async (id) => {
-    await fetch("/api/folders", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userKey, id })
-    });
-    await loadFolders(userKey);
-    await loadAgentConfig(userKey);
-  };
-
-  const copyConfig = async () => {
-    if (!agentConfigText) return;
-    await navigator.clipboard.writeText(agentConfigText);
-    alert("agent.json copied");
-  };
-
   const statusLabel = useMemo(() => (darkMode ? "Dark" : "Light"), [darkMode]);
 
   return (
@@ -190,44 +145,6 @@ export default function Home() {
         <div className="card metric-card">
           <div>Total Alerts</div>
           <div className="value danger">{summary.total_alerts}</div>
-        </div>
-      </section>
-
-      <section className="panel">
-        <h3>Monitored Folders Setup</h3>
-        <div className="tiny">Step 1: Add folders user wants to monitor on their machine.</div>
-        <div className="row" style={{ marginTop: 10 }}>
-          <div style={{ gridColumn: "span 4" }}>
-            <label>Folder Path</label>
-            <input
-              value={folderInput}
-              onChange={(e) => setFolderInput(e.target.value)}
-              placeholder="C:\\Users\\username\\Documents\\Sensitive"
-            />
-          </div>
-          <div className="submit-wrap">
-            <button type="button" onClick={addFolder}>Add Folder</button>
-          </div>
-        </div>
-        <table style={{ marginTop: 10 }}>
-          <thead><tr><th>Saved Monitored Folders</th><th>Action</th></tr></thead>
-          <tbody>
-            {folders.length ? folders.map((f) => (
-              <tr key={f.id}>
-                <td>{f.folder_path}</td>
-                <td><button type="button" className="danger-btn" onClick={() => removeFolder(f.id)}>Remove</button></td>
-              </tr>
-            )) : <tr><td colSpan={2}>No folders added yet.</td></tr>}
-          </tbody>
-        </table>
-      </section>
-
-      <section className="panel">
-        <h3>Generated Agent Config (agent.json)</h3>
-        <div className="tiny">Step 2: Copy this config and use with local agent.</div>
-        <textarea className="config-box" value={agentConfigText} readOnly />
-        <div style={{ marginTop: 8 }}>
-          <button type="button" onClick={copyConfig}>Copy Config</button>
         </div>
       </section>
 
