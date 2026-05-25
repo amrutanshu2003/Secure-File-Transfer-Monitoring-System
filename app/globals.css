@@ -152,6 +152,16 @@ button {
   font-size: 0.95rem;
 }
 
+textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--panel-soft);
+  color: var(--text);
+  padding: 10px;
+  font-size: 0.9rem;
+}
+
 input,
 select {
   background: var(--panel-soft);
@@ -184,6 +194,12 @@ button {
 
 .submit-wrap {
   align-self: end;
+}
+
+.config-box {
+  min-height: 200px;
+  margin-top: 10px;
+  font-family: Consolas, "Courier New", monospace;
 }
 
 table {
