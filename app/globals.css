@@ -1,7 +1,7 @@
 :root {
-  --bg: #eff5f3;
-  --panel: #ffffff;
-  --panel-soft: #f8fbff;
+  --bg: #f4fbf8;
+  --panel: rgba(255, 255, 255, 0.75);
+  --panel-soft: rgba(255, 255, 255, 0.9);
   --text: #102a43;
   --muted: #486581;
   --line: #d9e2ec;
@@ -16,34 +16,65 @@
 body {
   margin: 0;
   font-family: "Trebuchet MS", sans-serif;
-  background: linear-gradient(135deg, #f0f9ff, var(--bg));
+  background: radial-gradient(circle at 8% 8%, #e3f9f3 0, #f4fbf8 35%, #eef4ff 100%);
   color: var(--text);
-  transition: background 0.25s ease, color 0.25s ease;
 }
 
 body.dark {
-  --bg: #0f172a;
-  --panel: #111827;
-  --panel-soft: #0b1220;
+  --bg: #090f1c;
+  --panel: rgba(15, 23, 42, 0.76);
+  --panel-soft: rgba(11, 18, 32, 0.92);
   --text: #e5e7eb;
-  --muted: #94a3b8;
-  --line: #243244;
+  --muted: #9aa8bc;
+  --line: #25344b;
   --accent: #14b8a6;
-  --danger: #f87171;
-  background: linear-gradient(135deg, #0b1220, #111827);
+  --danger: #fb7185;
+  background: radial-gradient(circle at 10% 5%, #0b2a35 0, #0b1220 40%, #111827 100%);
 }
 
 .wrap {
-  max-width: 1100px;
-  margin: 24px auto;
-  padding: 0 14px 24px;
+  position: relative;
+  max-width: 1120px;
+  margin: 26px auto;
+  padding: 0 14px 28px;
 }
 
-.hero, .panel {
+.bg-orb {
+  position: absolute;
+  filter: blur(42px);
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.bg-orb-a {
+  width: 220px;
+  height: 220px;
+  background: #14b8a6;
+  top: -40px;
+  left: -30px;
+}
+
+.bg-orb-b {
+  width: 260px;
+  height: 260px;
+  background: #2563eb;
+  right: -40px;
+  top: 120px;
+}
+
+.hero,
+.panel,
+.nav,
+.metric-card {
+  backdrop-filter: blur(8px);
+}
+
+.hero,
+.panel {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 14px;
+  border-radius: 18px;
+  padding: 16px;
   margin-bottom: 12px;
 }
 
@@ -53,13 +84,20 @@ body.dark {
   align-items: center;
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 10px 12px;
+  border-radius: 18px;
+  padding: 12px 14px;
   margin-bottom: 12px;
 }
 
 .brand {
-  font-weight: 700;
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.tiny {
+  color: var(--muted);
+  font-size: 0.82rem;
 }
 
 .nav-actions {
@@ -68,7 +106,8 @@ body.dark {
 }
 
 .hero h1 {
-  margin: 4px 0;
+  margin: 5px 0;
+  font-size: clamp(1.65rem, 4vw, 2.7rem);
 }
 
 .row {
@@ -80,25 +119,37 @@ body.dark {
 .card {
   background: var(--panel-soft);
   border: 1px solid var(--line);
-  border-radius: 12px;
-  padding: 10px;
+  border-radius: 14px;
+  padding: 11px;
+}
+
+.metric-card {
+  box-shadow: 0 10px 30px rgba(18, 38, 63, 0.11);
 }
 
 .value {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.9rem;
+  font-weight: 800;
 }
 
 .danger {
   color: var(--danger);
 }
 
-input, select, button {
+label {
+  font-size: 0.87rem;
+  color: var(--muted);
+}
+
+input,
+select,
+button {
   width: 100%;
-  padding: 9px 10px;
-  border-radius: 8px;
+  padding: 10px 11px;
+  border-radius: 10px;
   border: 1px solid var(--line);
   margin-top: 6px;
+  font-size: 0.95rem;
 }
 
 input,
@@ -116,19 +167,14 @@ button {
   color: white;
   border: 0;
   cursor: pointer;
+  font-weight: 700;
 }
 
 .ghost {
   width: auto;
-  min-width: 44px;
-  padding: 8px 10px;
-  background: #e6f7f5;
-  color: #0f766e;
-}
-
-body.dark .ghost {
-  background: #1f2937;
-  color: #e5e7eb;
+  padding: 9px 12px;
+  background: rgba(20, 184, 166, 0.16);
+  color: var(--text);
 }
 
 .danger-btn {
@@ -136,22 +182,33 @@ body.dark .ghost {
   background: var(--danger);
 }
 
+.submit-wrap {
+  align-self: end;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
   background: var(--panel-soft);
+  border-radius: 12px;
+  overflow: hidden;
 }
 
-th, td {
+th,
+td {
   border-bottom: 1px solid var(--line);
   text-align: left;
-  padding: 8px;
+  padding: 9px 8px;
   font-size: 0.9rem;
   color: var(--text);
 }
 
 th {
   background: var(--panel);
+}
+
+tbody tr:nth-child(even) {
+  background: rgba(127, 145, 180, 0.07);
 }
 
 .footer {
@@ -163,4 +220,24 @@ th {
   display: flex;
   justify-content: space-between;
   gap: 8px;
+}
+
+@media (max-width: 760px) {
+  .brand {
+    font-size: 1.3rem;
+  }
+
+  .nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .nav-actions {
+    width: 100%;
+  }
+
+  .footer {
+    flex-direction: column;
+  }
 }

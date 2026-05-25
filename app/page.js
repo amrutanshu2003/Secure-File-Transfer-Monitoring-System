@@ -1,17 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 function fmt(ts) {
   if (!ts) return "-";
   return new Date(ts).toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
 }
 
+function getUserKey() {
+  const keyName = "sftms_user_key";
+  let key = localStorage.getItem(keyName);
+  if (!key) {
+    key = `user_${Math.random().toString(36).slice(2, 10)}`;
+    localStorage.setItem(keyName, key);
+  }
+  return key;
+}
+
 export default function Home() {
   const [summary, setSummary] = useState({ total_events: 0, total_alerts: 0, event_type_counts: [] });
   const [events, setEvents] = useState([]);
   const [alerts, setAlerts] = useState([]);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
+  const [userKey, setUserKey] = useState("");
   const [form, setForm] = useState({
     action_type: "modified",
     file_name: "",
@@ -22,14 +33,42 @@ export default function Home() {
 
   const load = async () => {
     const [s, e, a] = await Promise.all([
-      fetch("/api/summary").then((r) => r.json()),
-      fetch("/api/events").then((r) => r.json()),
-      fetch("/api/alerts").then((r) => r.json())
+      fetch("/api/summary", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/api/events", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/api/alerts", { cache: "no-store" }).then((r) => r.json())
     ]);
     setSummary(s);
     setEvents(e);
     setAlerts(a);
   };
+
+  const savePreferences = async (payload) => {
+    if (!userKey) return;
+    await fetch("/api/preferences", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userKey,
+        theme: payload.theme,
+        last_username: payload.last_username
+      })
+    });
+  };
+
+  useEffect(() => {
+    const k = getUserKey();
+    setUserKey(k);
+  }, []);
+
+  useEffect(() => {
+    if (!userKey) return;
+    (async () => {
+      const pref = await fetch(`/api/preferences?userKey=${encodeURIComponent(userKey)}`, { cache: "no-store" }).then((r) => r.json());
+      const isDark = (pref.theme || "dark") === "dark";
+      setDarkMode(isDark);
+      setForm((v) => ({ ...v, username: pref.last_username || "" }));
+    })();
+  }, [userKey]);
 
   useEffect(() => {
     load();
@@ -41,6 +80,17 @@ export default function Home() {
     document.body.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
+  useEffect(() => {
+    if (!userKey) return;
+    const id = setTimeout(() => {
+      savePreferences({
+        theme: darkMode ? "dark" : "light",
+        last_username: form.username
+      });
+    }, 300);
+    return () => clearTimeout(id);
+  }, [darkMode, form.username, userKey]);
+
   const submit = async (ev) => {
     ev.preventDefault();
     await fetch("/api/events", {
@@ -48,7 +98,7 @@ export default function Home() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form)
     });
-    setForm({ ...form, file_name: "", source_path: "", destination_path: "" });
+    setForm((v) => ({ ...v, file_name: "", source_path: "", destination_path: "" }));
     await load();
   };
 
@@ -59,13 +109,21 @@ export default function Home() {
     await load();
   };
 
+  const statusLabel = useMemo(() => (darkMode ? "Dark" : "Light"), [darkMode]);
+
   return (
     <main className="wrap">
+      <div className="bg-orb bg-orb-a" />
+      <div className="bg-orb bg-orb-b" />
+
       <nav className="nav">
-        <div className="brand">SFTMS Dashboard</div>
+        <div>
+          <div className="brand">SFTMS Dashboard</div>
+          <div className="tiny">Live Security Telemetry</div>
+        </div>
         <div className="nav-actions">
           <button type="button" className="ghost" onClick={() => setDarkMode((v) => !v)}>
-            {darkMode ? "☀️" : "🌙"}
+            {statusLabel} Mode
           </button>
           <button type="button" className="danger-btn" onClick={clearAll}>
             Clear Data
@@ -74,16 +132,17 @@ export default function Home() {
       </nav>
 
       <section className="hero">
+        <p className="tiny">Security Operations Center</p>
         <h1>Secure File Transfer Monitoring</h1>
         <div>Realtime dashboard (Vercel + DB). Timezone: IST</div>
       </section>
 
       <section className="row">
-        <div className="card">
+        <div className="card metric-card">
           <div>Total Events</div>
           <div className="value">{summary.total_events}</div>
         </div>
-        <div className="card">
+        <div className="card metric-card">
           <div>Total Alerts</div>
           <div className="value danger">{summary.total_alerts}</div>
         </div>
@@ -117,7 +176,7 @@ export default function Home() {
             <label>Destination Path</label>
             <input value={form.destination_path} onChange={(e) => setForm({ ...form, destination_path: e.target.value })} />
           </div>
-          <div style={{ alignSelf: "end" }}>
+          <div className="submit-wrap">
             <button type="submit">Save Event</button>
           </div>
         </form>
@@ -128,9 +187,9 @@ export default function Home() {
         <table>
           <thead><tr><th>Type</th><th>Count</th></tr></thead>
           <tbody>
-            {summary.event_type_counts.map((item) => (
+            {summary.event_type_counts.length ? summary.event_type_counts.map((item) => (
               <tr key={item.action_type}><td>{item.action_type}</td><td>{item.c}</td></tr>
-            ))}
+            )) : <tr><td colSpan={2}>No events yet.</td></tr>}
           </tbody>
         </table>
       </section>
@@ -140,14 +199,14 @@ export default function Home() {
         <table>
           <thead><tr><th>Time (IST)</th><th>Violation</th><th>User</th><th>File</th></tr></thead>
           <tbody>
-            {alerts.map((a) => (
+            {alerts.length ? alerts.map((a) => (
               <tr key={a.id}>
                 <td>{fmt(a.ts)}</td>
                 <td className="danger">{a.violation}</td>
                 <td>{a.username}</td>
                 <td>{a.file_name}</td>
               </tr>
-            ))}
+            )) : <tr><td colSpan={4}>No alerts yet.</td></tr>}
           </tbody>
         </table>
       </section>
@@ -157,7 +216,7 @@ export default function Home() {
         <table>
           <thead><tr><th>Time (IST)</th><th>Action</th><th>File</th><th>User</th><th>From</th><th>To</th></tr></thead>
           <tbody>
-            {events.map((e) => (
+            {events.length ? events.map((e) => (
               <tr key={e.id}>
                 <td>{fmt(e.ts)}</td>
                 <td>{e.action_type}</td>
@@ -166,14 +225,14 @@ export default function Home() {
                 <td>{e.source_path}</td>
                 <td>{e.destination_path}</td>
               </tr>
-            ))}
+            )) : <tr><td colSpan={6}>No events yet.</td></tr>}
           </tbody>
         </table>
       </section>
 
       <footer className="footer">
         <div>Secure File Transfer Monitoring System</div>
-        <div>Built for realtime alerts and audit visibility</div>
+        <div>Preference sync enabled (DB-backed theme + last user)</div>
       </footer>
     </main>
   );
