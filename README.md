@@ -74,6 +74,29 @@ Optional direct download setup:
 - Dashboard `Download Agent EXE` button will use that URL.
 - If not set, it falls back to `/downloads/SFTMSAgentSetup.exe`.
 
+## Store EXE In Database
+You can store installer EXE directly in Postgres and serve it from API.
+
+Required env:
+- `AGENT_UPLOAD_KEY` (secret key for upload endpoint)
+
+Upload API:
+- `POST /api/agent-exe`
+- Header: `x-agent-upload-key: <AGENT_UPLOAD_KEY>`
+- JSON body:
+```json
+{
+  "file_name": "SFTMSAgentSetup.exe",
+  "version": "1.0.0",
+  "mime_type": "application/vnd.microsoft.portable-executable",
+  "base64_data": "<base64-of-exe>"
+}
+```
+
+Download flow:
+- `GET /api/download-agent-exe`
+- If DB binary exists, it serves that first.
+
 ## Production Integration (Recommended)
 If you want truly automatic endpoint hits on real machine file changes:
 - Run the included local agent from a Windows machine.
