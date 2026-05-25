@@ -1,0 +1,22 @@
+{
+  "sensitive_paths": [
+    "C:\\Users\\amrut\\Documents\\Secure File Transfer Monitoring System\\sensitive_data",
+    "C:\\Users\\amrut\\Desktop\\Confidential"
+  ],
+  "restricted_extensions": [
+    ".docx",
+    ".xlsx",
+    ".pdf",
+    ".zip",
+    ".sql"
+  ],
+  "restricted_users": [],
+  "suspicious_destination_keywords": [
+    "usb",
+    "\\\\",
+    "onedrive",
+    "dropbox",
+    "google drive"
+  ],
+  "hash_algorithm": "sha256"
+}

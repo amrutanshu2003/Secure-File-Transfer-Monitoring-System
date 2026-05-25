@@ -1,0 +1,16 @@
+{
+  "api_base_url": "https://your-project-name.vercel.app",
+  "events_endpoint": "/api/events",
+  "watch_paths": [
+    "C:\\Users\\amrut\\Documents"
+  ],
+  "recursive": true,
+  "ignore_paths": [
+    "C:\\Users\\amrut\\Documents\\Secure File Transfer Monitoring System\\data",
+    "C:\\Users\\amrut\\Documents\\Secure File Transfer Monitoring System\\logs",
+    "C:\\Users\\amrut\\Documents\\Secure File Transfer Monitoring System\\node_modules",
+    "C:\\Users\\amrut\\Documents\\Secure File Transfer Monitoring System\\.next"
+  ],
+  "request_timeout_seconds": 8,
+  "retry_attempts": 3
+}

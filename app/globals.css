@@ -1,0 +1,148 @@
+:root {
+  --bg: #eff5f3;
+  --panel: #ffffff;
+  --text: #102a43;
+  --muted: #486581;
+  --line: #d9e2ec;
+  --accent: #0f766e;
+  --danger: #b91c1c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Trebuchet MS", sans-serif;
+  background: linear-gradient(135deg, #f0f9ff, var(--bg));
+  color: var(--text);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+body.dark {
+  --bg: #0f172a;
+  --panel: #111827;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --line: #243244;
+  --accent: #14b8a6;
+  --danger: #f87171;
+  background: linear-gradient(135deg, #0b1220, #111827);
+}
+
+.wrap {
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 0 14px 24px;
+}
+
+.hero, .panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+
+.brand {
+  font-weight: 700;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.hero h1 {
+  margin: 4px 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.card {
+  background: #f8fbff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.danger {
+  color: var(--danger);
+}
+
+input, select, button {
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  margin-top: 6px;
+}
+
+button {
+  background: var(--accent);
+  color: white;
+  border: 0;
+  cursor: pointer;
+}
+
+.ghost {
+  width: auto;
+  min-width: 44px;
+  padding: 8px 10px;
+  background: #e6f7f5;
+  color: #0f766e;
+}
+
+body.dark .ghost {
+  background: #1f2937;
+  color: #e5e7eb;
+}
+
+.danger-btn {
+  width: auto;
+  background: var(--danger);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  padding: 8px;
+  font-size: 0.9rem;
+}
+
+.footer {
+  margin-top: 6px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}

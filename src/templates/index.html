@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Secure File Transfer Monitoring Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="wrap">
+    <nav class="nav">
+      <div class="brand">SFTMS Dashboard</div>
+      <div class="nav-actions">
+        <button id="clearHistory" class="clear-btn" type="button">Clear History</button>
+        <button id="themeToggle" class="theme-btn" type="button" aria-label="Toggle theme">🌙</button>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <p class="eyebrow">Security Operations</p>
+      <h1>Secure File Transfer Monitoring Dashboard</h1>
+      <p class="subtitle">Live visibility of file activity, policy violations, and integrity signals.</p>
+    </header>
+
+    <section class="cards">
+      <div class="card">
+        <h2>Total Events</h2>
+        <p>{{ summary.total_events }}</p>
+      </div>
+      <div class="card">
+        <h2>Total Alerts</h2>
+        <p class="danger">{{ summary.total_alerts }}</p>
+      </div>
+    </section>
+
+    <section class="panel compact">
+      <h2>Event Type Counts</h2>
+      <table>
+        <thead><tr><th>Event Type</th><th>Count</th></tr></thead>
+        <tbody>
+          {% for name, count in event_counts %}
+          <tr><td>{{ name }}</td><td>{{ count }}</td></tr>
+          {% else %}
+          <tr><td colspan="2">No event counts yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panel compact">
+      <h2>Top Violations</h2>
+      <table>
+        <thead><tr><th>Violation</th><th>Count</th></tr></thead>
+        <tbody>
+          {% for name, count in violation_counts %}
+          <tr><td>{{ name }}</td><td>{{ count }}</td></tr>
+          {% else %}
+          <tr><td colspan="2">No violations yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Recent Alerts</h2>
+      <table>
+        <thead><tr><th>Time (IST)</th><th>Severity</th><th>Message</th><th>Violations</th></tr></thead>
+        <tbody>
+          {% for a in alerts %}
+          <tr>
+            <td>{{ a.timestamp_ist }}</td>
+            <td><span class="badge danger-badge">{{ a.severity }}</span></td>
+            <td>{{ a.message }}</td>
+            <td>{{ a.violations_json }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4">No alerts found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Recent Events</h2>
+      <table>
+        <thead><tr><th>Time (IST)</th><th>Type</th><th>Source</th><th>Destination</th><th>User</th></tr></thead>
+        <tbody>
+          {% for e in events %}
+          <tr>
+            <td>{{ e.timestamp_ist }}</td>
+            <td><span class="badge">{{ e.event_type }}</span></td>
+            <td>{{ e.source_path }}</td>
+            <td>{{ e.destination_path }}</td>
+            <td>{{ e.username }}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5">No events found.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <footer class="footer">
+      <div>Secure File Transfer Monitoring System</div>
+      <div>Realtime monitoring and alert visibility</div>
+    </footer>
+  </main>
+  <script>
+    (function () {
+      const key = "sftms_theme";
+      const body = document.body;
+      const btn = document.getElementById("themeToggle");
+      const clearBtn = document.getElementById("clearHistory");
+      const saved = localStorage.getItem(key);
+      if (saved === "dark") {
+        body.classList.add("dark");
+        btn.textContent = "☀️";
+      }
+      btn.addEventListener("click", function () {
+        body.classList.toggle("dark");
+        const dark = body.classList.contains("dark");
+        btn.textContent = dark ? "☀️" : "🌙";
+        localStorage.setItem(key, dark ? "dark" : "light");
+      });
+      clearBtn.addEventListener("click", async function () {
+        const ok = window.confirm("Are you sure you want to clear all events and alerts?");
+        if (!ok) return;
+        const res = await fetch("/api/clear", { method: "POST" });
+        if (res.ok) window.location.reload();
+      });
+    })();
+  </script>
+</body>
+</html>

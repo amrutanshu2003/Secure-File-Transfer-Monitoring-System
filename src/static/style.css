@@ -1,0 +1,275 @@
+:root {
+  --bg-1: #f3f8f6;
+  --bg-2: #edf2f9;
+  --ink: #14213d;
+  --muted: #4b5563;
+  --card: #ffffff;
+  --stroke: #d9e2ec;
+  --accent: #0f766e;
+  --danger: #b91c1c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Trebuchet MS", "Segoe UI", Tahoma, sans-serif;
+  background: radial-gradient(circle at 10% 0%, var(--bg-1), var(--bg-2) 58%);
+  color: var(--ink);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+body.dark {
+  --bg-1: #0b1220;
+  --bg-2: #0f172a;
+  --ink: #e5e7eb;
+  --muted: #94a3b8;
+  --card: #111827;
+  --stroke: #223043;
+}
+
+.wrap {
+  max-width: 1220px;
+  margin: 28px auto;
+  padding: 0 16px 20px;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 20px rgba(20, 33, 61, 0.06);
+}
+
+body.dark .nav {
+  background: var(--card);
+}
+
+.brand {
+  font-weight: 700;
+}
+
+.nav-right {
+  font-size: 1.1rem;
+}
+
+.theme-btn {
+  border: 1px solid var(--stroke);
+  background: var(--card);
+  color: var(--ink);
+  border-radius: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.clear-btn {
+  border: 1px solid #fecaca;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+body.dark .clear-btn {
+  border: 1px solid #7f1d1d;
+  background: #3f1a1a;
+  color: #fecaca;
+}
+
+.hero {
+  background: linear-gradient(125deg, #0f766e, #155e75 45%, #1d4ed8);
+  color: #f8fafc;
+  border-radius: 18px;
+  padding: 26px 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 16px 32px rgba(21, 94, 117, 0.28);
+}
+
+body.dark .hero {
+  background: linear-gradient(125deg, #0b3b35, #0f2f45 45%, #1e3a8a);
+}
+
+.hero h1 {
+  margin: 5px 0 8px;
+  font-size: clamp(1.4rem, 2.8vw, 2.2rem);
+}
+
+.subtitle {
+  margin: 0;
+  color: rgba(248, 250, 252, 0.92);
+}
+
+.eyebrow {
+  margin: 0;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.74rem;
+  opacity: 0.92;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.card,
+.panel {
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 8px 20px rgba(20, 33, 61, 0.06);
+  margin-bottom: 12px;
+}
+
+.card h2,
+.panel h2 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+
+.card p {
+  font-size: clamp(1.5rem, 3.6vw, 2.1rem);
+  margin: 0;
+  font-weight: 700;
+}
+
+.compact pre {
+  color: var(--muted);
+}
+
+.danger {
+  color: var(--danger);
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  background: #e1effe;
+  color: #1d4ed8;
+}
+
+body.dark .badge {
+  background: #1e3a8a;
+  color: #dbeafe;
+}
+
+.danger-badge {
+  background: #fee2e2;
+  color: var(--danger);
+}
+
+body.dark .danger-badge {
+  background: #3f1a1a;
+  color: #fecaca;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.88rem;
+  overflow: hidden;
+  border: 1px solid var(--stroke);
+  border-radius: 12px;
+}
+
+th,
+td {
+  border-bottom: 1px solid var(--stroke);
+  padding: 10px 9px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #f8fafc;
+  color: #334155;
+}
+
+body.dark th {
+  background: #0f1a2a;
+  color: #dbe7f3;
+}
+
+body.dark table {
+  border-color: var(--stroke);
+}
+
+body.dark th,
+body.dark td {
+  border-color: var(--stroke);
+  color: var(--ink);
+}
+
+tbody tr:nth-child(2n) {
+  background: #fcfdff;
+}
+
+body.dark tbody tr:nth-child(2n) {
+  background: #0f172a;
+}
+
+body.dark tbody tr:nth-child(2n + 1) {
+  background: #111827;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+pre {
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+@media (max-width: 800px) {
+  .wrap {
+    margin-top: 14px;
+  }
+
+  .hero {
+    padding: 18px;
+  }
+
+  th,
+  td {
+    font-size: 0.8rem;
+    padding: 8px 7px;
+  }
+}
+
+.footer {
+  margin-top: 6px;
+  border-top: 1px solid var(--stroke);
+  padding-top: 12px;
+  color: var(--muted);
+  font-size: 0.88rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+body.dark .footer {
+  color: #94a3b8;
+  border-top-color: var(--stroke);
+}
