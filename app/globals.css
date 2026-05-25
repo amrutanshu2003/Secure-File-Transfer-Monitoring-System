@@ -1,6 +1,7 @@
 :root {
   --bg: #eff5f3;
   --panel: #ffffff;
+  --panel-soft: #f8fbff;
   --text: #102a43;
   --muted: #486581;
   --line: #d9e2ec;
@@ -23,6 +24,7 @@ body {
 body.dark {
   --bg: #0f172a;
   --panel: #111827;
+  --panel-soft: #0b1220;
   --text: #e5e7eb;
   --muted: #94a3b8;
   --line: #243244;
@@ -76,7 +78,7 @@ body.dark {
 }
 
 .card {
-  background: #f8fbff;
+  background: var(--panel-soft);
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 10px;
@@ -97,6 +99,16 @@ input, select, button {
   border-radius: 8px;
   border: 1px solid var(--line);
   margin-top: 6px;
+}
+
+input,
+select {
+  background: var(--panel-soft);
+  color: var(--text);
+}
+
+input::placeholder {
+  color: var(--muted);
 }
 
 button {
@@ -127,6 +139,7 @@ body.dark .ghost {
 table {
   width: 100%;
   border-collapse: collapse;
+  background: var(--panel-soft);
 }
 
 th, td {
@@ -134,6 +147,11 @@ th, td {
   text-align: left;
   padding: 8px;
   font-size: 0.9rem;
+  color: var(--text);
+}
+
+th {
+  background: var(--panel);
 }
 
 .footer {
