@@ -205,6 +205,17 @@ button {
   padding: 10px 14px;
 }
 
+.file-pill {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.82rem;
+  vertical-align: middle;
+}
+
 .danger-btn {
   width: auto;
   background: var(--danger);
