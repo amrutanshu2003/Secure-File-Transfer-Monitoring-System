@@ -69,6 +69,11 @@ The repository includes a workflow that builds `SFTMSAgentSetup.exe` automatical
 Output file:
 - `SFTMSAgentSetup.exe`
 
+Optional direct download setup:
+- Set environment variable `AGENT_EXE_URL` in Vercel to a direct hosted `.exe` link.
+- Dashboard `Download Agent EXE` button will use that URL.
+- If not set, it opens the GitHub Actions workflow page.
+
 ## Production Integration (Recommended)
 If you want truly automatic endpoint hits on real machine file changes:
 - Run the included local agent from a Windows machine.
