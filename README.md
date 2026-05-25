@@ -48,15 +48,26 @@ npm run dev
 
 ## Realtime Usage
 1. Open dashboard.
-2. Use **Send File Action** form to submit action:
-   - `created`, `modified`, `moved`, `deleted`
-3. Event saves in DB instantly.
+2. Install and run the Windows agent installer on endpoint machines.
+3. Agent sends file events to `/api/events` automatically.
 4. If policy matches suspicious movement (example: restricted extension moved to `usb/onedrive/dropbox/network`), alert is auto-created.
 5. Dashboard shows:
    - Total events
    - Total alerts
    - Event type counts
    - Recent alerts/events (IST time)
+
+## EXE Auto Build (GitHub Actions)
+The repository includes a workflow that builds `SFTMSAgentSetup.exe` automatically.
+
+1. Push to `main`, or run workflow manually from **Actions** tab:
+   - `Build SFTMS Agent Installer`
+2. Open the workflow run.
+3. Download artifact:
+   - `SFTMSAgentSetup`
+
+Output file:
+- `SFTMSAgentSetup.exe`
 
 ## Production Integration (Recommended)
 If you want truly automatic endpoint hits on real machine file changes:

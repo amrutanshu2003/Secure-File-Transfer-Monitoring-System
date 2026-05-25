@@ -1,0 +1,33 @@
+name: Build SFTMS Agent Installer
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "installer/**"
+      - ".github/workflows/build-agent-installer.yml"
+
+jobs:
+  build-windows-installer:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup -y --no-progress
+
+      - name: Build EXE Installer
+        shell: pwsh
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "installer\SFTMSAgentSetup.iss"
+
+      - name: Upload Installer Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SFTMSAgentSetup
+          path: installer/output/SFTMSAgentSetup.exe
+          if-no-files-found: error

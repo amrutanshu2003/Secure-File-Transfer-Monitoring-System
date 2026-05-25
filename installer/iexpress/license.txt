@@ -1,0 +1,7 @@
+SFTMS Agent License
+
+Install this agent only on Windows devices you own or administer.
+The agent monitors file create, modify, delete, and rename activity and sends
+events to the configured Secure File Transfer Monitoring System dashboard.
+
+By continuing, you confirm that you have permission to monitor this device.

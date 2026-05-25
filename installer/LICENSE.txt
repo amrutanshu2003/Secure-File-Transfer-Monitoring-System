@@ -1,0 +1,9 @@
+SFTMS Agent License
+
+This monitoring agent is intended for authorized defensive monitoring only.
+
+By installing this software, you confirm that you have permission to monitor file
+activity on this Windows device and to send monitoring events to the configured
+Secure File Transfer Monitoring System dashboard.
+
+Do not install this agent on systems you do not own or administer.
