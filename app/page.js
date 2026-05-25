@@ -137,16 +137,17 @@ export default function Home() {
 
       <section className="panel">
         <h3>One-Click Full-System Agent Setup</h3>
-        <div className="tiny">User ko bas installer download karke double-click run karna hai. Agent auto-start setup hoke background me hamesha run karega.</div>
+        <div className="tiny">Download and run once. The agent installs, starts in the background, and auto-runs at startup.</div>
         <div style={{ marginTop: 10 }}>
-          <a href="/api/download-agent" className="download-btn">Download Agent Installer (.cmd)</a>
-          <span className="file-pill">.cmd</span>
+          <a href="/api/download-agent" className="download-btn">Download Agent Installer</a>
+          <a href="/api/download-agent-stop" className="download-btn stop-btn">Download Stop Agent Tool</a>
         </div>
         <table style={{ marginTop: 12 }}>
           <thead><tr><th>Step</th><th>Action</th></tr></thead>
           <tbody>
-            <tr><td>1</td><td>Download <code>sftms-agent-installer.cmd</code></td></tr>
-            <tr><td>2</td><td>Double click run once. Agent install hoke background me auto-start monitoring karega.</td></tr>
+            <tr><td>1</td><td>Download the Agent Installer.</td></tr>
+            <tr><td>2</td><td>Double-click and run once. Monitoring starts automatically in background.</td></tr>
+            <tr><td>3</td><td>If needed, download and run the Stop Agent Tool to disable monitoring tasks.</td></tr>
           </tbody>
         </table>
       </section>

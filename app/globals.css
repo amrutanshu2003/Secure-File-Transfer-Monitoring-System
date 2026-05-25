@@ -116,7 +116,8 @@ body.dark {
 .row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 10px;
+  gap: 14px;
+  margin-bottom: 14px;
 }
 
 .card {
@@ -128,6 +129,10 @@ body.dark {
 
 .metric-card {
   box-shadow: 0 10px 30px rgba(18, 38, 63, 0.11);
+  min-height: 94px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .value {
@@ -203,17 +208,11 @@ button {
   font-weight: 700;
   border-radius: 10px;
   padding: 10px 14px;
+  margin-right: 8px;
 }
 
-.file-pill {
-  display: inline-block;
-  margin-left: 8px;
-  padding: 8px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 0.82rem;
-  vertical-align: middle;
+.stop-btn {
+  background: rgba(185, 28, 28, 0.9);
 }
 
 .danger-btn {
