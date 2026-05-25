@@ -21,7 +21,7 @@ export default function Home() {
   const [summary, setSummary] = useState({ total_events: 0, total_alerts: 0, event_type_counts: [] });
   const [events, setEvents] = useState([]);
   const [alerts, setAlerts] = useState([]);
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
   const [userKey, setUserKey] = useState("");
   const [lastUsername, setLastUsername] = useState("");
 
@@ -52,13 +52,17 @@ export default function Home() {
   useEffect(() => {
     const k = getUserKey();
     setUserKey(k);
+    const localTheme = localStorage.getItem("sftms_theme");
+    if (localTheme) {
+      setDarkMode(localTheme === "dark");
+    }
   }, []);
 
   useEffect(() => {
     if (!userKey) return;
     (async () => {
       const pref = await fetch(`/api/preferences?userKey=${encodeURIComponent(userKey)}`, { cache: "no-store" }).then((r) => r.json());
-      const isDark = (pref.theme || "dark") === "dark";
+      const isDark = (pref.theme || "light") === "dark";
       setDarkMode(isDark);
       setLastUsername(pref.last_username || "");
     })();
@@ -72,6 +76,7 @@ export default function Home() {
 
   useEffect(() => {
     document.body.classList.toggle("dark", darkMode);
+    localStorage.setItem("sftms_theme", darkMode ? "dark" : "light");
   }, [darkMode]);
 
   useEffect(() => {
