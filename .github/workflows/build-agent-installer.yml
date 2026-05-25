@@ -25,6 +25,18 @@ jobs:
         run: |
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "installer\SFTMSAgentSetup.iss"
 
+      - name: Sign Installer (optional)
+        if: ${{ secrets.WIN_CERT_BASE64 != '' && secrets.WIN_CERT_PASSWORD != '' }}
+        shell: pwsh
+        run: |
+          $pfxPath = Join-Path $env:RUNNER_TEMP "codesign.pfx"
+          [IO.File]::WriteAllBytes($pfxPath, [Convert]::FromBase64String("${{ secrets.WIN_CERT_BASE64 }}"))
+
+          $signtool = Get-ChildItem "C:\Program Files (x86)\Windows Kits" -Recurse -Filter signtool.exe -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
+          if (-not $signtool) { throw "signtool.exe not found" }
+
+          & $signtool sign /f $pfxPath /p "${{ secrets.WIN_CERT_PASSWORD }}" /fd SHA256 /tr http://timestamp.digicert.com /td SHA256 "installer\output\SFTMSAgentSetup.exe"
+
       - name: Upload Installer Artifact
         uses: actions/upload-artifact@v4
         with:

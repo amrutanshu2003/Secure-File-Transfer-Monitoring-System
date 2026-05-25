@@ -1,6 +1,6 @@
 #define MyAppName "SFTMS Agent"
 #define MyAppVersion "1.0.0"
-#define MyAppPublisher "SFTMS"
+#define MyAppPublisher "amrutanshu2003"
 #define MyAppExeName "agent-runner.ps1"
 
 [Setup]
@@ -22,6 +22,7 @@ UninstallDisplayName=SFTMS Agent
 VersionInfoVersion={#MyAppVersion}
 VersionInfoCompany={#MyAppPublisher}
 VersionInfoDescription=Secure File Transfer Monitoring System Agent
+VersionInfoCopyright=Copyright (C) amrutanshu2003
 WizardImageFile=assets\wizard-left.bmp
 WizardSmallImageFile=assets\wizard-small.bmp
 
