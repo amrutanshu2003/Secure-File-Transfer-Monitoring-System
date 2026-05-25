@@ -31,7 +31,7 @@ export async function POST(request) {
   const destination_path = body.destination_path || "";
   const username = body.username || "unknown";
   const hash_value = crypto.createHash("sha256").update(`${file_name}:${Date.now()}`).digest("hex");
-  const violations = evaluateViolations({ file_name, destination_path });
+  const violations = evaluateViolations({ action_type, file_name, destination_path });
 
   const inserted = await sql`
     INSERT INTO file_events (action_type, file_name, source_path, destination_path, username, hash_value, violations)
