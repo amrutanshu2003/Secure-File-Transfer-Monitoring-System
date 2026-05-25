@@ -5,6 +5,9 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export async function GET(request) {
+  const hardcodedArtifactUrl = "https://github.com/amrutanshu2003/Secure-File-Transfer-Monitoring-System/actions/runs/26400980783/artifacts/7198337545";
+  return NextResponse.redirect(hardcodedArtifactUrl, 302);
+
   const dbBinary = await getActiveAgentBinaryMeta();
   if (dbBinary) {
     const requestUrl = new URL(request.url);
