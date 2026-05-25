@@ -97,6 +97,18 @@ Download flow:
 - `GET /api/download-agent-exe`
 - If DB binary exists, it serves that first.
 
+## Free Test Signing (Self-Signed)
+For local testing only:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\create-test-signing-cert.ps1
+powershell -ExecutionPolicy Bypass -File scripts\sign-installer-local.ps1
+```
+
+Note:
+- This is useful to test signing pipeline.
+- SmartScreen and "Unknown publisher" warning for public users usually requires a trusted CA-issued code-signing certificate.
+
 Local upload helper:
 ```powershell
 $env:AGENT_UPLOAD_KEY="your_secret"

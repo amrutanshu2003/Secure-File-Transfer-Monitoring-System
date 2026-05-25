@@ -25,6 +25,8 @@ VersionInfoDescription=Secure File Transfer Monitoring System Agent
 VersionInfoCopyright=Copyright (C) amrutanshu2003
 WizardImageFile=assets\wizard-left.bmp
 WizardSmallImageFile=assets\wizard-small.bmp
+SetupIconFile=assets\agent.ico
+UninstallDisplayIcon={app}\agent.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -33,6 +35,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Source: "agent\agent-runner.ps1"; DestDir: "{app}"; Flags: ignoreversion
 Source: "scripts\install-agent.ps1"; DestDir: "{app}"; Flags: ignoreversion
 Source: "scripts\uninstall-agent.ps1"; DestDir: "{app}"; Flags: ignoreversion
+Source: "assets\agent.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\Uninstall SFTMS Agent"; Filename: "{uninstallexe}"
