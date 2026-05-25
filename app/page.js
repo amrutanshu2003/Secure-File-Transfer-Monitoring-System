@@ -23,13 +23,7 @@ export default function Home() {
   const [alerts, setAlerts] = useState([]);
   const [darkMode, setDarkMode] = useState(true);
   const [userKey, setUserKey] = useState("");
-  const [form, setForm] = useState({
-    action_type: "modified",
-    file_name: "",
-    source_path: "",
-    destination_path: "",
-    username: ""
-  });
+  const [lastUsername, setLastUsername] = useState("");
 
   const load = async () => {
     const [s, e, a] = await Promise.all([
@@ -66,7 +60,7 @@ export default function Home() {
       const pref = await fetch(`/api/preferences?userKey=${encodeURIComponent(userKey)}`, { cache: "no-store" }).then((r) => r.json());
       const isDark = (pref.theme || "dark") === "dark";
       setDarkMode(isDark);
-      setForm((v) => ({ ...v, username: pref.last_username || "" }));
+      setLastUsername(pref.last_username || "");
     })();
   }, [userKey]);
 
@@ -85,29 +79,11 @@ export default function Home() {
     const id = setTimeout(() => {
       savePreferences({
         theme: darkMode ? "dark" : "light",
-        last_username: form.username
+        last_username: lastUsername
       });
     }, 300);
     return () => clearTimeout(id);
-  }, [darkMode, form.username, userKey]);
-
-  const submit = async (ev) => {
-    ev.preventDefault();
-    await fetch("/api/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form)
-    });
-    setForm((v) => ({ ...v, file_name: "", source_path: "", destination_path: "" }));
-    await load();
-  };
-
-  const clearAll = async () => {
-    const ok = window.confirm("Are you sure you want to clear all events and alerts?");
-    if (!ok) return;
-    await fetch("/api/clear", { method: "POST" });
-    await load();
-  };
+  }, [darkMode, lastUsername, userKey]);
 
   const statusLabel = useMemo(() => (darkMode ? "Dark" : "Light"), [darkMode]);
 
@@ -119,14 +95,10 @@ export default function Home() {
       <nav className="nav">
         <div>
           <div className="brand">SFTMS Dashboard</div>
-          <div className="tiny">Live Security Telemetry</div>
         </div>
         <div className="nav-actions">
           <button type="button" className="ghost" onClick={() => setDarkMode((v) => !v)}>
             {statusLabel} Mode
-          </button>
-          <button type="button" className="danger-btn" onClick={clearAll}>
-            Clear Data
           </button>
         </div>
       </nav>
@@ -134,7 +106,7 @@ export default function Home() {
       <section className="hero">
         <p className="tiny">Security Operations Center</p>
         <h1>Secure File Transfer Monitoring</h1>
-        <div>Realtime dashboard (Vercel + DB). Timezone: IST</div>
+        <div className="tiny">Realtime feed from local system agent</div>
       </section>
 
       <section className="row">
@@ -149,37 +121,16 @@ export default function Home() {
       </section>
 
       <section className="panel">
-        <h3>Send File Action (Realtime Input)</h3>
-        <form onSubmit={submit} className="row">
-          <div>
-            <label>Action</label>
-            <select value={form.action_type} onChange={(e) => setForm({ ...form, action_type: e.target.value })}>
-              <option value="created">created</option>
-              <option value="modified">modified</option>
-              <option value="moved">moved</option>
-              <option value="deleted">deleted</option>
-            </select>
-          </div>
-          <div>
-            <label>File Name</label>
-            <input value={form.file_name} onChange={(e) => setForm({ ...form, file_name: e.target.value })} required />
-          </div>
-          <div>
-            <label>User</label>
-            <input value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} placeholder="amrut" />
-          </div>
-          <div>
-            <label>Source Path</label>
-            <input value={form.source_path} onChange={(e) => setForm({ ...form, source_path: e.target.value })} />
-          </div>
-          <div>
-            <label>Destination Path</label>
-            <input value={form.destination_path} onChange={(e) => setForm({ ...form, destination_path: e.target.value })} />
-          </div>
-          <div className="submit-wrap">
-            <button type="submit">Save Event</button>
-          </div>
-        </form>
+        <h3>Live Monitoring Setup</h3>
+        <div className="tiny">Run local agent on monitored machine:</div>
+        <textarea
+          className="config-box"
+          readOnly
+          value={`python src/local_agent.py --config config/agent.json`}
+        />
+        <div className="tiny" style={{ marginTop: 8 }}>
+          Current preferred username: {lastUsername || "not set"}
+        </div>
       </section>
 
       <section className="panel">
@@ -232,7 +183,7 @@ export default function Home() {
 
       <footer className="footer">
         <div>Secure File Transfer Monitoring System</div>
-        <div>Preference sync enabled (DB-backed theme + last user)</div>
+        <div>Read-only realtime monitoring dashboard</div>
       </footer>
     </main>
   );
