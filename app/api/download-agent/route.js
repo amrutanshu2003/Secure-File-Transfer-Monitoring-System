@@ -6,16 +6,25 @@ export const revalidate = 0;
 function buildScript(origin) {
   const apiUrl = `${origin}/api/events`;
   return `
+param(
+  [switch]$Run
+)
+
 $ErrorActionPreference = "SilentlyContinue"
 
 $apiUrl = "${apiUrl}"
 $username = $env:USERNAME
 $hostname = $env:COMPUTERNAME
-$watchPaths = @(
-  "$env:USERPROFILE\\Documents",
-  "$env:USERPROFILE\\Desktop",
-  "$env:USERPROFILE\\Downloads"
-)
+$taskName = "SFTMS-Agent"
+$agentDir = Join-Path $env:APPDATA "SFTMSAgent"
+$agentScript = Join-Path $agentDir "agent-runner.ps1"
+$watchPaths = @()
+$drives = Get-PSDrive -PSProvider FileSystem | Where-Object { $_.Free -ne $null }
+foreach ($d in $drives) {
+  if ($d.Root) {
+    $watchPaths += $d.Root
+  }
+}
 
 function Send-Event($actionType, $srcPath, $dstPath) {
   $fileName = if ($dstPath -and $dstPath -ne "") { [System.IO.Path]::GetFileName($dstPath) } else { [System.IO.Path]::GetFileName($srcPath) }
@@ -62,8 +71,25 @@ foreach ($path in $watchPaths) {
   $watchers += $w
 }
 
-Write-Host "SFTMS Agent started. Monitoring: $($watchPaths -join ', ')"
-while ($true) { Start-Sleep -Seconds 2 }
+if ($Run) {
+  Write-Host "SFTMS Agent started. Monitoring drives: $($watchPaths -join ', ')"
+  while ($true) { Start-Sleep -Seconds 2 }
+  exit 0
+}
+
+if (-not (Test-Path $agentDir)) {
+  New-Item -ItemType Directory -Path $agentDir -Force | Out-Null
+}
+
+Copy-Item -Path $PSCommandPath -Destination $agentScript -Force
+
+$runnerCmd = "powershell.exe -ExecutionPolicy Bypass -WindowStyle Hidden -File \\"$agentScript\\" -Run"
+schtasks /Create /F /SC ONLOGON /TN $taskName /TR $runnerCmd | Out-Null
+
+Start-Process -FilePath "powershell.exe" -ArgumentList "-ExecutionPolicy Bypass -WindowStyle Hidden -File \\"$agentScript\\" -Run" -WindowStyle Hidden
+
+Write-Host "SFTMS Agent installed successfully."
+Write-Host "It will auto-start at login and run in background."
 `.trimStart();
 }
 
@@ -75,7 +101,7 @@ export async function GET(request) {
   return new NextResponse(script, {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="sftms-agent.ps1"'
+      "Content-Disposition": 'attachment; filename="sftms-agent-installer.ps1"'
     }
   });
 }
