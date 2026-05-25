@@ -140,6 +140,7 @@ export default function Home() {
         <div className="tiny">User ko bas installer download karke double-click run karna hai. Agent auto-start setup hoke background me hamesha run karega.</div>
         <div style={{ marginTop: 10 }}>
           <a href="/api/download-agent" className="download-btn">Download Agent Installer (.cmd)</a>
+          <span className="file-pill">.cmd</span>
         </div>
         <table style={{ marginTop: 12 }}>
           <thead><tr><th>Step</th><th>Action</th></tr></thead>
