@@ -50,7 +50,8 @@ if not exist "%AGENT_DIR%" mkdir "%AGENT_DIR%"
 )
 
 schtasks /Create /F /SC ONLOGON /TN "%TASK_NAME%" /TR "powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File ""%AGENT_PS1%""" >nul 2>nul
-powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "%AGENT_PS1%"
+schtasks /Create /F /SC ONSTART /TN "%TASK_NAME%-Boot" /TR "powershell.exe -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File ""%AGENT_PS1%""" >nul 2>nul
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Start-Process powershell.exe -ArgumentList '-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File ""%AGENT_PS1%""' -WindowStyle Hidden" >nul 2>nul
 
 echo SFTMS Agent installed and started.
 echo It will auto-start on each login.
@@ -69,4 +70,3 @@ export async function GET(request) {
     }
   });
 }
-
