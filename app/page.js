@@ -70,7 +70,7 @@ export default function Home() {
 
   useEffect(() => {
     load();
-    const id = setInterval(load, 1000);
+    const id = setInterval(load, 5000);
     return () => clearInterval(id);
   }, []);
 
