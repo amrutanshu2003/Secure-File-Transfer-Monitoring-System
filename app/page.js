@@ -132,15 +132,15 @@ export default function Home() {
 
       <section className="panel">
         <h3>One-Click Full-System Agent Setup</h3>
-        <div className="tiny">User ko bas installer download karke run karna hai. Agent auto-start setup hoke background me hamesha run karega.</div>
+        <div className="tiny">User ko bas installer download karke double-click run karna hai. Agent auto-start setup hoke background me hamesha run karega.</div>
         <div style={{ marginTop: 10 }}>
-          <a href="/api/download-agent" className="download-btn">Download Agent Installer</a>
+          <a href="/api/download-agent" className="download-btn">Download Agent Installer (.cmd)</a>
         </div>
         <table style={{ marginTop: 12 }}>
           <thead><tr><th>Step</th><th>Action</th></tr></thead>
           <tbody>
-            <tr><td>1</td><td>Download <code>sftms-agent-installer.ps1</code></td></tr>
-            <tr><td>2</td><td>Run once in PowerShell. Agent install hoke background me auto-start monitoring karega.</td></tr>
+            <tr><td>1</td><td>Download <code>sftms-agent-installer.cmd</code></td></tr>
+            <tr><td>2</td><td>Double click run once. Agent install hoke background me auto-start monitoring karega.</td></tr>
           </tbody>
         </table>
       </section>
