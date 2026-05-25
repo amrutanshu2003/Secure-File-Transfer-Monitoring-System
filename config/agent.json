@@ -1,5 +1,5 @@
 {
-  "api_base_url": "https://secure-file-transfer-monitoring-system.vercel.app",
+  "api_base_url": "https://secure-file-transfer-monitoring.vercel.app",
   "events_endpoint": "/api/events",
   "watch_paths": [
     "C:\\Users\\amrut\\Documents\\Secure File Transfer Monitoring System"
