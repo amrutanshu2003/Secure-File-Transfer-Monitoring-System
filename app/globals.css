@@ -39,43 +39,28 @@ body.dark {
   padding: 0 14px 28px;
 }
 
-.bg-orb {
-  position: absolute;
-  filter: blur(42px);
-  opacity: 0.25;
-  pointer-events: none;
-}
-
-.bg-orb-a {
-  width: 220px;
-  height: 220px;
-  background: #14b8a6;
-  top: -40px;
-  left: -30px;
-}
-
-.bg-orb-b {
-  width: 260px;
-  height: 260px;
-  background: #2563eb;
-  right: -40px;
-  top: 120px;
-}
-
 .hero,
 .panel,
 .nav,
 .metric-card {
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
 }
 
 .hero,
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: 12px;
   padding: 16px;
   margin-bottom: 12px;
+  box-shadow: 0 8px 22px rgba(11, 28, 54, 0.14);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.panel:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(11, 28, 54, 0.2);
+  border-color: rgba(88, 121, 180, 0.5);
 }
 
 .nav {
@@ -84,12 +69,13 @@ body.dark {
   align-items: center;
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: 12px;
   padding: 12px 14px;
   margin-bottom: 12px;
   position: sticky;
   top: 8px;
   z-index: 50;
+  box-shadow: 0 8px 18px rgba(11, 28, 54, 0.14);
 }
 
 .brand {
@@ -123,8 +109,16 @@ body.dark {
 .card {
   background: var(--panel-soft);
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 10px;
   padding: 11px;
+  box-shadow: 0 8px 16px rgba(11, 28, 54, 0.12);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 24px rgba(11, 28, 54, 0.2);
+  border-color: rgba(88, 121, 180, 0.5);
 }
 
 .metric-card {
@@ -206,9 +200,16 @@ button {
   color: #fff;
   text-decoration: none;
   font-weight: 700;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 10px 14px;
   margin-right: 8px;
+  box-shadow: 0 8px 16px rgba(15, 118, 110, 0.3);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(15, 118, 110, 0.4);
 }
 
 .stop-btn {
@@ -234,9 +235,10 @@ table {
   width: 100%;
   border-collapse: collapse;
   background: var(--panel-soft);
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
   table-layout: fixed;
+  box-shadow: inset 0 0 0 1px rgba(110, 135, 175, 0.18);
 }
 
 th,
@@ -275,10 +277,12 @@ tbody tr:nth-child(even) {
 
 .help-video {
   width: 100%;
+  aspect-ratio: 16 / 9;
   max-height: 420px;
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid var(--line);
   background: #000;
+  object-fit: cover;
 }
 
 .split-row {
@@ -290,7 +294,14 @@ tbody tr:nth-child(even) {
 
 .split-panel {
   margin-bottom: 0;
-  min-height: 360px;
+  min-height: 390px;
+}
+
+.video-shell {
+  background: linear-gradient(180deg, rgba(18, 45, 86, 0.35), rgba(18, 45, 86, 0.12));
+  border: 1px solid rgba(90, 126, 186, 0.35);
+  border-radius: 10px;
+  padding: 10px;
 }
 
 @media (max-width: 760px) {
