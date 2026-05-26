@@ -24,6 +24,8 @@ export default function AdminPage() {
   const [agentEnabled, setAgentEnabled] = useState(true);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
+  const [visibleAdminEvents, setVisibleAdminEvents] = useState(8);
+  const [visibleAdminAlerts, setVisibleAdminAlerts] = useState(8);
   const [newPolicy, setNewPolicy] = useState({ name: "", rule_type: "destination", pattern: "" });
   const [newUser, setNewUser] = useState({ username: "", role: "viewer" });
   const [newTokenName, setNewTokenName] = useState("");
@@ -166,14 +168,30 @@ export default function AdminPage() {
 
       <section className="panel"><h3>Live Event Stream</h3>
         <table><thead><tr><th>Time</th><th>Action</th><th>File</th><th>User</th><th>Path</th></tr></thead><tbody>
-          {events.slice(0, 20).map((e) => <tr key={e.id}><td>{fmt(e.ts)}</td><td>{e.action_type}</td><td>{e.file_name}</td><td>{e.username}</td><td>{e.destination_path || e.source_path}</td></tr>)}
+          {events.slice(0, visibleAdminEvents).map((e) => <tr key={e.id}><td>{fmt(e.ts)}</td><td>{e.action_type}</td><td>{e.file_name}</td><td>{e.username}</td><td>{e.destination_path || e.source_path}</td></tr>)}
         </tbody></table>
+        <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
+          {visibleAdminEvents < events.length ? (
+            <button type="button" onClick={() => setVisibleAdminEvents((v) => v + 8)}>Load More Events</button>
+          ) : null}
+          {visibleAdminEvents > 8 ? (
+            <button type="button" className="ghost" onClick={() => setVisibleAdminEvents(8)}>Show Less</button>
+          ) : null}
+        </div>
       </section>
 
       <section className="panel"><h3>Alert Center</h3>
         <table><thead><tr><th>Time</th><th>Severity</th><th>Violation</th><th>Status</th><th>Action</th></tr></thead><tbody>
-          {alerts.slice(0, 20).map((a) => <tr key={a.id}><td>{fmt(a.ts)}</td><td className="danger">{a.severity}</td><td>{a.violation}</td><td>{a.status}</td><td><button type="button" onClick={() => updateAlert(a.id, a.status === "resolved" ? "open" : "resolved")}>{a.status === "resolved" ? "Reopen" : "Resolve"}</button></td></tr>)}
+          {alerts.slice(0, visibleAdminAlerts).map((a) => <tr key={a.id}><td>{fmt(a.ts)}</td><td className="danger">{a.severity}</td><td>{a.violation}</td><td>{a.status}</td><td><button type="button" onClick={() => updateAlert(a.id, a.status === "resolved" ? "open" : "resolved")}>{a.status === "resolved" ? "Reopen" : "Resolve"}</button></td></tr>)}
         </tbody></table>
+        <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
+          {visibleAdminAlerts < alerts.length ? (
+            <button type="button" onClick={() => setVisibleAdminAlerts((v) => v + 8)}>Load More Alerts</button>
+          ) : null}
+          {visibleAdminAlerts > 8 ? (
+            <button type="button" className="ghost" onClick={() => setVisibleAdminAlerts(8)}>Show Less</button>
+          ) : null}
+        </div>
       </section>
 
       <section className="panel"><h3>Monitored Endpoints</h3>
