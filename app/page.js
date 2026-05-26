@@ -101,16 +101,13 @@ export default function Home() {
 
   return (
     <main className="wrap">
-      <div className="bg-orb bg-orb-a" />
-      <div className="bg-orb bg-orb-b" />
-
       <nav className="nav">
         <div>
           <div className="brand">SFTMS Dashboard</div>
         </div>
         <div className="nav-actions">
           <button type="button" className="ghost" onClick={() => setDarkMode((v) => !v)}>
-            {darkMode ? "☀️" : "🌙"}
+            {statusLabel}
           </button>
           <button type="button" className="danger-btn" onClick={clearAll}>
             Clear History
@@ -154,7 +151,7 @@ export default function Home() {
 
         <div className="panel split-panel">
           <h3>How To Use</h3>
-          <div className="video-wrap">
+          <div className="video-wrap video-shell">
             <video controls preload="metadata" className="help-video">
               <source src="/videos/how-to-use.mp4" type="video/mp4" />
             </video>
