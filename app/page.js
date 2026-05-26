@@ -29,6 +29,8 @@ export default function Home() {
   const [alertsOffset, setAlertsOffset] = useState(0);
   const [hasMoreEvents, setHasMoreEvents] = useState(true);
   const [hasMoreAlerts, setHasMoreAlerts] = useState(true);
+  const [visibleEvents, setVisibleEvents] = useState(8);
+  const [visibleAlerts, setVisibleAlerts] = useState(8);
   const [darkMode, setDarkMode] = useState(false);
   const [showHowToModal, setShowHowToModal] = useState(false);
   const [userKey, setUserKey] = useState("");
@@ -118,8 +120,7 @@ export default function Home() {
 
   useEffect(() => {
     load();
-    const id = setInterval(load, 5000);
-    return () => clearInterval(id);
+    return undefined;
   }, [historyCutoff]);
 
   useEffect(() => {
@@ -150,6 +151,8 @@ export default function Home() {
     setAlertsOffset(0);
     setHasMoreEvents(true);
     setHasMoreAlerts(true);
+    setVisibleEvents(8);
+    setVisibleAlerts(8);
   };
 
   const statusLabel = useMemo(() => (darkMode ? "Dark" : "Light"), [darkMode]);
@@ -273,8 +276,8 @@ export default function Home() {
           <thead><tr><th>Time (IST)</th><th>Violation</th><th>User</th><th>File</th></tr></thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={4}><span className="skel skel-row" /></td></tr>
-            ) : alerts.length ? alerts.map((a) => (
+              <tr><td colSpan={4}>Loading alerts...</td></tr>
+            ) : alerts.length ? alerts.slice(0, visibleAlerts).map((a) => (
               <tr key={a.id}>
                 <td>{fmt(a.ts)}</td>
                 <td className="danger">{a.violation}</td>
@@ -284,11 +287,14 @@ export default function Home() {
             )) : <tr><td colSpan={4}>No alerts yet.</td></tr>}
           </tbody>
         </table>
-        {hasMoreAlerts ? (
-          <div style={{ marginTop: 10 }}>
-            <button type="button" onClick={() => loadAlertsPage(alertsOffset)}>Load More Alerts</button>
-          </div>
-        ) : null}
+        <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
+          {visibleAlerts < alerts.length ? (
+            <button type="button" onClick={() => setVisibleAlerts((v) => v + 8)}>Load More Alerts</button>
+          ) : null}
+          {visibleAlerts > 8 ? (
+            <button type="button" className="ghost" onClick={() => setVisibleAlerts(8)}>Show Less</button>
+          ) : null}
+        </div>
       </section>
 
       <section className="panel">
@@ -297,8 +303,8 @@ export default function Home() {
           <thead><tr><th>Time (IST)</th><th>Action</th><th>File</th><th>User</th><th>From</th><th>To</th></tr></thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={6}><span className="skel skel-row" /></td></tr>
-            ) : events.length ? events.map((e) => (
+              <tr><td colSpan={6}>Loading events...</td></tr>
+            ) : events.length ? events.slice(0, visibleEvents).map((e) => (
               <tr key={e.id}>
                 <td>{fmt(e.ts)}</td>
                 <td>{e.action_type}</td>
@@ -310,11 +316,14 @@ export default function Home() {
             )) : <tr><td colSpan={6}>No events yet.</td></tr>}
           </tbody>
         </table>
-        {hasMoreEvents ? (
-          <div style={{ marginTop: 10 }}>
-            <button type="button" onClick={() => loadEventsPage(eventsOffset)}>Load More Events</button>
-          </div>
-        ) : null}
+        <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
+          {visibleEvents < events.length ? (
+            <button type="button" onClick={() => setVisibleEvents((v) => v + 8)}>Load More Events</button>
+          ) : null}
+          {visibleEvents > 8 ? (
+            <button type="button" className="ghost" onClick={() => setVisibleEvents(8)}>Show Less</button>
+          ) : null}
+        </div>
       </section>
 
       <footer className="footer">
