@@ -31,9 +31,10 @@ export default function Home() {
   const [historyCutoff, setHistoryCutoff] = useState(null);
 
   const load = async () => {
-    const [e, a] = await Promise.all([
-      fetch("/api/events", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/alerts", { cache: "no-store" }).then((r) => r.json())
+    const [s, e, a] = await Promise.all([
+      fetch("/api/summary", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/api/events?limit=1000", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/api/alerts?limit=1000", { cache: "no-store" }).then((r) => r.json())
     ]);
     const cutoffMs = historyCutoff ? new Date(historyCutoff).getTime() : 0;
     const filteredEvents = cutoffMs ? e.filter((x) => new Date(x.ts).getTime() >= cutoffMs) : e;
@@ -45,11 +46,19 @@ export default function Home() {
     }, {});
     const event_type_counts = Object.entries(countsMap).map(([action_type, c]) => ({ action_type, c }));
 
-    setSummary({
-      total_events: filteredEvents.length,
-      total_alerts: filteredAlerts.length,
-      event_type_counts
-    });
+    if (!cutoffMs) {
+      setSummary({
+        total_events: s.total_events || 0,
+        total_alerts: s.total_alerts || 0,
+        event_type_counts: s.event_type_counts || []
+      });
+    } else {
+      setSummary({
+        total_events: filteredEvents.length,
+        total_alerts: filteredAlerts.length,
+        event_type_counts
+      });
+    }
     setEvents(filteredEvents);
     setAlerts(filteredAlerts);
   };
