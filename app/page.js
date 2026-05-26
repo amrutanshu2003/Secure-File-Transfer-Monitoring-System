@@ -25,6 +25,7 @@ export default function Home() {
   const [events, setEvents] = useState([]);
   const [alerts, setAlerts] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
+  const [showHowToModal, setShowHowToModal] = useState(false);
   const [userKey, setUserKey] = useState("");
   const [lastUsername, setLastUsername] = useState("");
 
@@ -59,6 +60,8 @@ export default function Home() {
     if (localTheme) {
       setDarkMode(localTheme === "dark");
     }
+    const seen = localStorage.getItem("sftms_howto_seen");
+    if (!seen) setShowHowToModal(true);
   }, []);
 
   useEffect(() => {
@@ -104,6 +107,35 @@ export default function Home() {
 
   return (
     <main className="wrap">
+      {showHowToModal ? (
+        <div className="modal-backdrop">
+          <div className="modal-card">
+            <h3>How To Use SFTMS</h3>
+            <p className="tiny">Watch this quick setup video before using the dashboard.</p>
+            <div className="video-wrap video-shell" style={{ marginTop: 10 }}>
+              <video controls autoPlay preload="metadata" className="help-video">
+                <source src={howToVideoUrl} type="video/mp4" />
+              </video>
+            </div>
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="ghost"
+                onClick={() => {
+                  localStorage.setItem("sftms_howto_seen", "1");
+                  setShowHowToModal(false);
+                }}
+              >
+                Don&apos;t show again
+              </button>
+              <button type="button" onClick={() => setShowHowToModal(false)}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <nav className="nav">
         <div>
           <div className="brand">SFTMS Dashboard</div>
