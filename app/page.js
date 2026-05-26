@@ -28,16 +28,30 @@ export default function Home() {
   const [showHowToModal, setShowHowToModal] = useState(false);
   const [userKey, setUserKey] = useState("");
   const [lastUsername, setLastUsername] = useState("");
+  const [historyCutoff, setHistoryCutoff] = useState(null);
 
   const load = async () => {
-    const [s, e, a] = await Promise.all([
-      fetch("/api/summary", { cache: "no-store" }).then((r) => r.json()),
+    const [e, a] = await Promise.all([
       fetch("/api/events", { cache: "no-store" }).then((r) => r.json()),
       fetch("/api/alerts", { cache: "no-store" }).then((r) => r.json())
     ]);
-    setSummary(s);
-    setEvents(e);
-    setAlerts(a);
+    const cutoffMs = historyCutoff ? new Date(historyCutoff).getTime() : 0;
+    const filteredEvents = cutoffMs ? e.filter((x) => new Date(x.ts).getTime() >= cutoffMs) : e;
+    const filteredAlerts = cutoffMs ? a.filter((x) => new Date(x.ts).getTime() >= cutoffMs) : a;
+    const countsMap = filteredEvents.reduce((acc, item) => {
+      const k = item.action_type || "unknown";
+      acc[k] = (acc[k] || 0) + 1;
+      return acc;
+    }, {});
+    const event_type_counts = Object.entries(countsMap).map(([action_type, c]) => ({ action_type, c }));
+
+    setSummary({
+      total_events: filteredEvents.length,
+      total_alerts: filteredAlerts.length,
+      event_type_counts
+    });
+    setEvents(filteredEvents);
+    setAlerts(filteredAlerts);
   };
 
   const savePreferences = async (payload) => {
@@ -60,6 +74,8 @@ export default function Home() {
     if (localTheme) {
       setDarkMode(localTheme === "dark");
     }
+    const localCutoff = localStorage.getItem("sftms_history_cutoff");
+    if (localCutoff) setHistoryCutoff(localCutoff);
     const seen = localStorage.getItem("sftms_howto_seen");
     if (!seen) setShowHowToModal(true);
   }, []);
@@ -78,7 +94,7 @@ export default function Home() {
     load();
     const id = setInterval(load, 5000);
     return () => clearInterval(id);
-  }, []);
+  }, [historyCutoff]);
 
   useEffect(() => {
     document.body.classList.toggle("dark", darkMode);
@@ -97,10 +113,11 @@ export default function Home() {
   }, [darkMode, lastUsername, userKey]);
 
   const clearAll = async () => {
-    const ok = window.confirm("Are you sure you want to clear all events and alerts?");
+    const ok = window.confirm("Clear history only for your dashboard view?");
     if (!ok) return;
-    await fetch("/api/clear", { method: "POST" });
-    await load();
+    const nowIso = new Date().toISOString();
+    localStorage.setItem("sftms_history_cutoff", nowIso);
+    setHistoryCutoff(nowIso);
   };
 
   const statusLabel = useMemo(() => (darkMode ? "Dark" : "Light"), [darkMode]);
