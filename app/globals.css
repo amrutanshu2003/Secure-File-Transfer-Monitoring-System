@@ -221,6 +221,19 @@ button {
   background: var(--danger);
 }
 
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+td button,
+.form-grid button,
+.nav-actions button {
+  width: auto;
+}
+
 .submit-wrap {
   align-self: end;
 }

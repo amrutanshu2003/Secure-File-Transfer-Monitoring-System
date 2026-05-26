@@ -109,6 +109,7 @@ export default function Home() {
           <div className="brand">SFTMS Dashboard</div>
         </div>
         <div className="nav-actions">
+          <a href="/admin" className="download-btn">Admin</a>
           <button type="button" className="ghost" onClick={() => setDarkMode((v) => !v)}>
             {statusLabel}
           </button>

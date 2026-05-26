@@ -30,8 +30,42 @@ export async function POST(request) {
   const source_path = body.source_path || "";
   const destination_path = body.destination_path || "";
   const username = body.username || "unknown";
+  const hostname = body.hostname || body.machine_name || "unknown-host";
+  const endpointKey = body.endpoint_key || `${hostname}:${username}`;
+  const agentVersion = body.agent_version || "1.0.0";
   const hash_value = crypto.createHash("sha256").update(`${file_name}:${Date.now()}`).digest("hex");
   const violations = evaluateViolations({ action_type, file_name, destination_path });
+
+  await sql`
+    INSERT INTO monitored_endpoints (endpoint_key, hostname, username, os_name, agent_version, last_seen, status)
+    VALUES (${endpointKey}, ${hostname}, ${username}, ${body.os_name || "Windows"}, ${agentVersion}, NOW(), 'online')
+    ON CONFLICT (endpoint_key)
+    DO UPDATE SET
+      hostname = EXCLUDED.hostname,
+      username = EXCLUDED.username,
+      os_name = EXCLUDED.os_name,
+      agent_version = EXCLUDED.agent_version,
+      last_seen = NOW(),
+      status = 'online'
+  `;
+
+  if (source_path || destination_path) {
+    const baselinePath = destination_path || source_path;
+    const existing = await sql`SELECT hash_value FROM integrity_baselines WHERE file_path = ${baselinePath} LIMIT 1`;
+    if (!existing.rows.length) {
+      await sql`
+        INSERT INTO integrity_baselines (file_path, hash_value, mismatch_count, updated_at)
+        VALUES (${baselinePath}, ${hash_value}, 0, NOW())
+      `;
+    } else if (existing.rows[0].hash_value !== hash_value && action_type === "modified") {
+      await sql`
+        UPDATE integrity_baselines
+        SET hash_value = ${hash_value}, mismatch_count = mismatch_count + 1, updated_at = NOW()
+        WHERE file_path = ${baselinePath}
+      `;
+      violations.push("Integrity hash mismatch detected");
+    }
+  }
 
   const inserted = await sql`
     INSERT INTO file_events (action_type, file_name, source_path, destination_path, username, hash_value, violations)
