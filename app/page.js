@@ -217,11 +217,11 @@ export default function Home() {
 
       <section className="row">
         <div className="card metric-card">
-          <div className="metric-head">Total Events <span className="live-pill live-green">LIVE</span></div>
+          <div className="metric-head">Total Events <span className="live-dot live-green" aria-label="Live events" /></div>
           <div className="value">{loading ? <span className="skel skel-text" /> : summary.total_events}</div>
         </div>
         <div className="card metric-card">
-          <div className="metric-head">Total Alerts <span className="live-pill live-red">LIVE</span></div>
+          <div className="metric-head">Total Alerts <span className="live-dot live-red" aria-label="Live alerts" /></div>
           <div className="value danger">{loading ? <span className="skel skel-text" /> : summary.total_alerts}</div>
         </div>
       </section>
