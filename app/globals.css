@@ -269,6 +269,18 @@ tbody tr:nth-child(even) {
   gap: 8px;
 }
 
+.video-wrap {
+  margin-top: 10px;
+}
+
+.help-video {
+  width: 100%;
+  max-height: 420px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #000;
+}
+
 @media (max-width: 760px) {
   .brand {
     font-size: 1.3rem;
