@@ -9,7 +9,7 @@ export const revalidate = 0;
 export async function GET(request) {
   await initDb();
   const { searchParams } = new URL(request.url);
-  const limit = Math.min(Number(searchParams.get("limit") || 200), 10000);
+  const limit = Math.min(Number(searchParams.get("limit") || 10000), 10000);
   const offset = Math.max(Number(searchParams.get("offset") || 0), 0);
   const { rows } = await sql`
     SELECT id, ts, action_type, file_name, source_path, destination_path, username, hash_value, violations
