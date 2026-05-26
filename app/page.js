@@ -120,7 +120,17 @@ export default function Home() {
             <div className="modal-actions">
               <button
                 type="button"
-                className="ghost"
+                className="outline-btn"
+                onClick={() => {
+                  localStorage.removeItem("sftms_howto_seen");
+                  setShowHowToModal(false);
+                }}
+              >
+                Show Every Time
+              </button>
+              <button
+                type="button"
+                className="danger-btn"
                 onClick={() => {
                   localStorage.setItem("sftms_howto_seen", "1");
                   setShowHowToModal(false);
@@ -128,7 +138,7 @@ export default function Home() {
               >
                 Don&apos;t show again
               </button>
-              <button type="button" onClick={() => setShowHowToModal(false)}>
+              <button type="button" className="ghost" onClick={() => setShowHowToModal(false)}>
                 Close
               </button>
             </div>
