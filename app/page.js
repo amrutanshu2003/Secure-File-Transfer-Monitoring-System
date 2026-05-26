@@ -46,10 +46,6 @@ export default function Home() {
   };
 
   const loadSummary = async () => {
-    if (historyCutoff) {
-      setSummary({ total_events: 0, total_alerts: 0, event_type_counts: [] });
-      return;
-    }
     const s = await fetch("/api/summary", { cache: "no-store" }).then((r) => r.json());
     setSummary({
       total_events: s.total_events || 0,
@@ -159,7 +155,6 @@ export default function Home() {
     setHasMoreAlerts(true);
     setVisibleEvents(8);
     setVisibleAlerts(8);
-    setSummary({ total_events: 0, total_alerts: 0, event_type_counts: [] });
   };
 
   const statusLabel = useMemo(() => (darkMode ? "Dark" : "Light"), [darkMode]);
