@@ -22,37 +22,47 @@ export default function AdminPage() {
   const [tokens, setTokens] = useState([]);
   const [health, setHealth] = useState({ status: "unknown" });
   const [agentEnabled, setAgentEnabled] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [newPolicy, setNewPolicy] = useState({ name: "", rule_type: "destination", pattern: "" });
   const [newUser, setNewUser] = useState({ username: "", role: "viewer" });
   const [newTokenName, setNewTokenName] = useState("");
   const [createdToken, setCreatedToken] = useState("");
 
   const load = async () => {
-    const [o, e, a, ep, p, r, s, u, t, h, c] = await Promise.all([
-      fetch("/api/admin/overview", { cache: "no-store" }).then((x) => x.json()),
-      fetch("/api/events", { cache: "no-store" }).then((x) => x.json()),
-      fetch("/api/admin/alerts", { cache: "no-store" }).then((x) => x.json()),
-      fetch("/api/admin/endpoints", { cache: "no-store" }).then((x) => x.json()),
-      fetch("/api/admin/policies", { cache: "no-store" }).then((x) => x.json()),
-      fetch("/api/admin/reports", { cache: "no-store" }).then((x) => x.json()),
-      fetch("/api/admin/settings", { cache: "no-store" }).then((x) => x.json()),
-      fetch("/api/admin/users", { cache: "no-store" }).then((x) => x.json()),
-      fetch("/api/admin/tokens", { cache: "no-store" }).then((x) => x.json()),
-      fetch("/api/admin/health", { cache: "no-store" }).then((x) => x.json()),
-      fetch("/api/agent-control", { cache: "no-store" }).then((x) => x.json())
-    ]);
+    setLoading(true);
+    setLoadError("");
+    try {
+      const [o, e, a, ep, p, r, s, u, t, h, c] = await Promise.all([
+        fetch("/api/admin/overview", { cache: "no-store" }).then((x) => x.json()),
+        fetch("/api/events", { cache: "no-store" }).then((x) => x.json()),
+        fetch("/api/admin/alerts", { cache: "no-store" }).then((x) => x.json()),
+        fetch("/api/admin/endpoints", { cache: "no-store" }).then((x) => x.json()),
+        fetch("/api/admin/policies", { cache: "no-store" }).then((x) => x.json()),
+        fetch("/api/admin/reports", { cache: "no-store" }).then((x) => x.json()),
+        fetch("/api/admin/settings", { cache: "no-store" }).then((x) => x.json()),
+        fetch("/api/admin/users", { cache: "no-store" }).then((x) => x.json()),
+        fetch("/api/admin/tokens", { cache: "no-store" }).then((x) => x.json()),
+        fetch("/api/admin/health", { cache: "no-store" }).then((x) => x.json()),
+        fetch("/api/agent-control", { cache: "no-store" }).then((x) => x.json())
+      ]);
 
-    setOverview(o);
-    setEvents(e);
-    setAlerts(a);
-    setEndpoints(ep);
-    setPolicies(p);
-    setReports(r);
-    setSettings(s);
-    setUsers(u);
-    setTokens(t);
-    setHealth(h);
-    setAgentEnabled(c.enabled !== false);
+      setOverview(o);
+      setEvents(e);
+      setAlerts(a);
+      setEndpoints(ep);
+      setPolicies(p);
+      setReports(r);
+      setSettings(s);
+      setUsers(u);
+      setTokens(t);
+      setHealth(h);
+      setAgentEnabled(c.enabled !== false);
+    } catch (err) {
+      setLoadError("Unable to load admin data. Check server/DB connection.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -146,11 +156,12 @@ export default function AdminPage() {
       </nav>
 
       <section className="row">
-        <div className="card metric-card"><div>Total Events</div><div className="value">{overview.totals.events}</div></div>
-        <div className="card metric-card"><div>Total Alerts</div><div className="value danger">{overview.totals.alerts}</div></div>
-        <div className="card metric-card"><div>Endpoints</div><div className="value">{overview.totals.endpoints}</div></div>
-        <div className="card metric-card"><div>Open Alerts</div><div className="value danger">{overview.totals.open_alerts}</div></div>
+        <div className="card metric-card"><div>Total Events</div><div className="value">{loading ? <span className="skel skel-text" /> : overview.totals.events}</div></div>
+        <div className="card metric-card"><div>Total Alerts</div><div className="value danger">{loading ? <span className="skel skel-text" /> : overview.totals.alerts}</div></div>
+        <div className="card metric-card"><div>Endpoints</div><div className="value">{loading ? <span className="skel skel-text" /> : overview.totals.endpoints}</div></div>
+        <div className="card metric-card"><div>Open Alerts</div><div className="value danger">{loading ? <span className="skel skel-text" /> : overview.totals.open_alerts}</div></div>
       </section>
+      {loadError ? <section className="panel"><div className="danger">{loadError}</div></section> : null}
 
       <section className="panel"><h3>Live Event Stream</h3>
         <table><thead><tr><th>Time</th><th>Action</th><th>File</th><th>User</th><th>Path</th></tr></thead><tbody>

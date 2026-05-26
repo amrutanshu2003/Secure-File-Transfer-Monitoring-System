@@ -34,6 +34,8 @@ export default function Home() {
   const [userKey, setUserKey] = useState("");
   const [lastUsername, setLastUsername] = useState("");
   const [historyCutoff, setHistoryCutoff] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   const applyCutoff = (items) => {
     const cutoffMs = historyCutoff ? new Date(historyCutoff).getTime() : 0;
@@ -66,7 +68,15 @@ export default function Home() {
   };
 
   const load = async () => {
-    await Promise.all([loadSummary(), loadEventsPage(0, true), loadAlertsPage(0, true)]);
+    setLoading(true);
+    setLoadError("");
+    try {
+      await Promise.all([loadSummary(), loadEventsPage(0, true), loadAlertsPage(0, true)]);
+    } catch (err) {
+      setLoadError("Unable to load realtime data. Please retry.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const savePreferences = async (payload) => {
@@ -208,13 +218,14 @@ export default function Home() {
       <section className="row">
         <div className="card metric-card">
           <div>Total Events</div>
-          <div className="value">{summary.total_events}</div>
+          <div className="value">{loading ? <span className="skel skel-text" /> : summary.total_events}</div>
         </div>
         <div className="card metric-card">
           <div>Total Alerts</div>
-          <div className="value danger">{summary.total_alerts}</div>
+          <div className="value danger">{loading ? <span className="skel skel-text" /> : summary.total_alerts}</div>
         </div>
       </section>
+      {loadError ? <section className="panel"><div className="danger">{loadError}</div></section> : null}
 
       <section className="split-row">
         <div className="panel split-panel">
@@ -260,7 +271,9 @@ export default function Home() {
         <table>
           <thead><tr><th>Time (IST)</th><th>Violation</th><th>User</th><th>File</th></tr></thead>
           <tbody>
-            {alerts.length ? alerts.map((a) => (
+            {loading ? (
+              <tr><td colSpan={4}><span className="skel skel-row" /></td></tr>
+            ) : alerts.length ? alerts.map((a) => (
               <tr key={a.id}>
                 <td>{fmt(a.ts)}</td>
                 <td className="danger">{a.violation}</td>
@@ -282,7 +295,9 @@ export default function Home() {
         <table>
           <thead><tr><th>Time (IST)</th><th>Action</th><th>File</th><th>User</th><th>From</th><th>To</th></tr></thead>
           <tbody>
-            {events.length ? events.map((e) => (
+            {loading ? (
+              <tr><td colSpan={6}><span className="skel skel-row" /></td></tr>
+            ) : events.length ? events.map((e) => (
               <tr key={e.id}>
                 <td>{fmt(e.ts)}</td>
                 <td>{e.action_type}</td>
