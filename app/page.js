@@ -33,8 +33,8 @@ export default function Home() {
   const load = async () => {
     const [s, e, a] = await Promise.all([
       fetch("/api/summary", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/events?limit=1000", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/alerts?limit=1000", { cache: "no-store" }).then((r) => r.json())
+      fetch("/api/events", { cache: "no-store" }).then((r) => r.json()),
+      fetch("/api/alerts", { cache: "no-store" }).then((r) => r.json())
     ]);
     const cutoffMs = historyCutoff ? new Date(historyCutoff).getTime() : 0;
     const filteredEvents = cutoffMs ? e.filter((x) => new Date(x.ts).getTime() >= cutoffMs) : e;
