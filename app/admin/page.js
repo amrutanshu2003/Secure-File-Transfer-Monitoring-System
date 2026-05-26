@@ -157,10 +157,10 @@ export default function AdminPage() {
       </nav>
 
       <section className="row">
-        <div className="card metric-card"><div>Total Events</div><div className="value">{loading ? <span className="skel skel-text" /> : overview.totals.events}</div></div>
-        <div className="card metric-card"><div>Total Alerts</div><div className="value danger">{loading ? <span className="skel skel-text" /> : overview.totals.alerts}</div></div>
-        <div className="card metric-card"><div>Endpoints</div><div className="value">{loading ? <span className="skel skel-text" /> : overview.totals.endpoints}</div></div>
-        <div className="card metric-card"><div>Open Alerts</div><div className="value danger">{loading ? <span className="skel skel-text" /> : overview.totals.open_alerts}</div></div>
+        <div className="card metric-card"><div className="metric-head">Total Events <span className="live-dot live-green" aria-label="Live events" /></div><div className="value">{loading ? <span className="skel skel-text" /> : overview.totals.events}</div></div>
+        <div className="card metric-card"><div className="metric-head">Total Alerts <span className="live-dot live-red" aria-label="Live alerts" /></div><div className="value danger">{loading ? <span className="skel skel-text" /> : overview.totals.alerts}</div></div>
+        <div className="card metric-card"><div className="metric-head">Endpoints <span className="live-dot live-yellow" aria-label="Live endpoints" /></div><div className="value">{loading ? <span className="skel skel-text" /> : overview.totals.endpoints}</div></div>
+        <div className="card metric-card"><div className="metric-head">Open Alerts <span className="live-dot live-blue" aria-label="Live open alerts" /></div><div className="value danger">{loading ? <span className="skel skel-text" /> : overview.totals.open_alerts}</div></div>
       </section>
       {loadError ? <section className="panel"><div className="danger">{loadError}</div></section> : null}
 
