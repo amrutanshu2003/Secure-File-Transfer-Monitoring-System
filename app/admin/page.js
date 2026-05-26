@@ -10,6 +10,7 @@ function fmt(ts) {
 const emptyOverview = { totals: { events: 0, alerts: 0, endpoints: 0, open_alerts: 0 }, severity_breakdown: [], top_violations: [], actions_24h: [] };
 
 export default function AdminPage() {
+  const [darkMode, setDarkMode] = useState(false);
   const [overview, setOverview] = useState(emptyOverview);
   const [events, setEvents] = useState([]);
   const [alerts, setAlerts] = useState([]);
@@ -55,10 +56,20 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
+    const localTheme = localStorage.getItem("sftms_theme");
+    if (localTheme) setDarkMode(localTheme === "dark");
+  }, []);
+
+  useEffect(() => {
     load();
     const id = setInterval(load, 5000);
     return () => clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle("dark", darkMode);
+    localStorage.setItem("sftms_theme", darkMode ? "dark" : "light");
+  }, [darkMode]);
 
   const updateAlert = async (id, status) => {
     await fetch("/api/admin/alerts", {
@@ -122,6 +133,9 @@ export default function AdminPage() {
         <div className="brand">SFTMS Admin Panel</div>
         <div className="nav-actions">
           <a className="download-btn" href="/">Go Dashboard</a>
+          <button type="button" className="ghost" onClick={() => setDarkMode((v) => !v)}>
+            {darkMode ? "Dark" : "Light"}
+          </button>
           <button type="button" className="danger-btn" onClick={clearData}>Clear Data</button>
         </div>
       </nav>
