@@ -159,10 +159,10 @@ export default function AdminPage() {
       </nav>
 
       <section className="row">
-        <div className="card metric-card"><div className="metric-head">Total Events <span className="live-dot live-green" aria-label="Live events" /></div><div className="value">{loading ? <span className="skel skel-text" /> : overview.totals.events}</div></div>
-        <div className="card metric-card"><div className="metric-head">Total Alerts <span className="live-dot live-red" aria-label="Live alerts" /></div><div className="value danger">{loading ? <span className="skel skel-text" /> : overview.totals.alerts}</div></div>
-        <div className="card metric-card"><div className="metric-head">Endpoints <span className="live-dot live-yellow" aria-label="Live endpoints" /></div><div className="value">{loading ? <span className="skel skel-text" /> : overview.totals.endpoints}</div></div>
-        <div className="card metric-card"><div className="metric-head">Open Alerts <span className="live-dot live-blue" aria-label="Live open alerts" /></div><div className="value danger">{loading ? <span className="skel skel-text" /> : overview.totals.open_alerts}</div></div>
+        <div className="card metric-card"><div className="metric-head">Total Events <span className="live-dot live-green" aria-label="Live events" /></div><div className="value">{loading ? "-" : overview.totals.events}</div></div>
+        <div className="card metric-card"><div className="metric-head">Total Alerts <span className="live-dot live-red" aria-label="Live alerts" /></div><div className="value danger">{loading ? "-" : overview.totals.alerts}</div></div>
+        <div className="card metric-card"><div className="metric-head">Endpoints <span className="live-dot live-yellow" aria-label="Live endpoints" /></div><div className="value">{loading ? "-" : overview.totals.endpoints}</div></div>
+        <div className="card metric-card"><div className="metric-head">Open Alerts <span className="live-dot live-blue" aria-label="Live open alerts" /></div><div className="value danger">{loading ? "-" : overview.totals.open_alerts}</div></div>
       </section>
       {loadError ? <section className="panel"><div className="danger">{loadError}</div></section> : null}
 
@@ -170,8 +170,8 @@ export default function AdminPage() {
         <table><thead><tr><th>Time</th><th>Action</th><th>File</th><th>User</th><th>Path</th></tr></thead><tbody>
           {loading ? (
             <>
-              <tr><td colSpan={5}><span className="skel skel-row" /></td></tr>
-              <tr><td colSpan={5}><span className="skel skel-row" /></td></tr>
+              <tr><td colSpan={5}>Loading...</td></tr>
+              <tr><td colSpan={5}>Loading...</td></tr>
             </>
           ) : events.slice(0, visibleAdminEvents).map((e) => <tr key={e.id}><td>{fmt(e.ts)}</td><td>{e.action_type}</td><td>{e.file_name}</td><td>{e.username}</td><td>{e.destination_path || e.source_path}</td></tr>)}
         </tbody></table>
@@ -189,8 +189,8 @@ export default function AdminPage() {
         <table><thead><tr><th>Time</th><th>Severity</th><th>Violation</th><th>Status</th><th>Action</th></tr></thead><tbody>
           {loading ? (
             <>
-              <tr><td colSpan={5}><span className="skel skel-row" /></td></tr>
-              <tr><td colSpan={5}><span className="skel skel-row" /></td></tr>
+              <tr><td colSpan={5}>Loading...</td></tr>
+              <tr><td colSpan={5}>Loading...</td></tr>
             </>
           ) : alerts.slice(0, visibleAdminAlerts).map((a) => <tr key={a.id}><td>{fmt(a.ts)}</td><td className="danger">{a.severity}</td><td>{a.violation}</td><td>{a.status}</td><td><button type="button" onClick={() => updateAlert(a.id, a.status === "resolved" ? "open" : "resolved")}>{a.status === "resolved" ? "Reopen" : "Resolve"}</button></td></tr>)}
         </tbody></table>
@@ -208,8 +208,8 @@ export default function AdminPage() {
         <table><thead><tr><th>Endpoint</th><th>User</th><th>OS</th><th>Agent</th><th>Status</th><th>Last Seen</th></tr></thead><tbody>
           {loading ? (
             <>
-              <tr><td colSpan={6}><span className="skel skel-row" /></td></tr>
-              <tr><td colSpan={6}><span className="skel skel-row" /></td></tr>
+              <tr><td colSpan={6}>Loading...</td></tr>
+              <tr><td colSpan={6}>Loading...</td></tr>
             </>
           ) : endpoints.length ? endpoints.map((x) => <tr key={x.endpoint_key}><td>{x.hostname}</td><td>{x.username}</td><td>{x.os_name}</td><td>{x.agent_version}</td><td>{x.computed_status}</td><td>{fmt(x.last_seen)}</td></tr>) : <tr><td colSpan={6}>No endpoints yet.</td></tr>}
         </tbody></table>
@@ -224,13 +224,13 @@ export default function AdminPage() {
             <input placeholder="Pattern" value={newPolicy.pattern} onChange={(e) => setNewPolicy((v) => ({ ...v, pattern: e.target.value }))} />
             <button type="button" onClick={addPolicy}>Add Policy</button>
           </div>
-          <table><thead><tr><th>Name</th><th>Type</th><th>Pattern</th><th>Action</th></tr></thead><tbody>{loading ? <tr><td colSpan={4}><span className="skel skel-row" /></td></tr> : policies.length ? policies.map((p) => <tr key={p.id}><td>{p.name}</td><td>{p.rule_type}</td><td>{p.pattern}</td><td><button type="button" className="danger-btn" onClick={() => removePolicy(p.id)}>Delete</button></td></tr>) : <tr><td colSpan={4}>No policies found.</td></tr>}</tbody></table>
+          <table><thead><tr><th>Name</th><th>Type</th><th>Pattern</th><th>Action</th></tr></thead><tbody>{loading ? <tr><td colSpan={4}>Loading...</td></tr> : policies.length ? policies.map((p) => <tr key={p.id}><td>{p.name}</td><td>{p.rule_type}</td><td>{p.pattern}</td><td><button type="button" className="danger-btn" onClick={() => removePolicy(p.id)}>Delete</button></td></tr>) : <tr><td colSpan={4}>No policies found.</td></tr>}</tbody></table>
         </div>
 
         <div className="panel split-panel">
           <h3>Reports</h3>
-          <table><thead><tr><th>Top Violations</th><th>Count</th></tr></thead><tbody>{loading ? <tr><td colSpan={2}><span className="skel skel-row" /></td></tr> : reports.top_violations.length ? reports.top_violations.map((v) => <tr key={v.violation}><td>{v.violation}</td><td>{v.c}</td></tr>) : <tr><td colSpan={2}>No report data.</td></tr>}</tbody></table>
-          <table style={{ marginTop: 10 }}><thead><tr><th>Action (24h)</th><th>Count</th></tr></thead><tbody>{loading ? <tr><td colSpan={2}><span className="skel skel-row" /></td></tr> : overview.actions_24h.length ? overview.actions_24h.map((x) => <tr key={x.action_type}><td>{x.action_type}</td><td>{x.c}</td></tr>) : <tr><td colSpan={2}>No activity data.</td></tr>}</tbody></table>
+          <table><thead><tr><th>Top Violations</th><th>Count</th></tr></thead><tbody>{loading ? <tr><td colSpan={2}>Loading...</td></tr> : reports.top_violations.length ? reports.top_violations.map((v) => <tr key={v.violation}><td>{v.violation}</td><td>{v.c}</td></tr>) : <tr><td colSpan={2}>No report data.</td></tr>}</tbody></table>
+          <table style={{ marginTop: 10 }}><thead><tr><th>Action (24h)</th><th>Count</th></tr></thead><tbody>{loading ? <tr><td colSpan={2}>Loading...</td></tr> : overview.actions_24h.length ? overview.actions_24h.map((x) => <tr key={x.action_type}><td>{x.action_type}</td><td>{x.c}</td></tr>) : <tr><td colSpan={2}>No activity data.</td></tr>}</tbody></table>
         </div>
       </section>
 
@@ -241,13 +241,13 @@ export default function AdminPage() {
             <select value={newUser.role} onChange={(e) => setNewUser((v) => ({ ...v, role: e.target.value }))}><option value="admin">admin</option><option value="analyst">analyst</option><option value="viewer">viewer</option></select>
             <button type="button" onClick={upsertUser}>Save User</button>
           </div>
-          <table><thead><tr><th>User</th><th>Role</th></tr></thead><tbody>{loading ? <tr><td colSpan={2}><span className="skel skel-row" /></td></tr> : users.length ? users.map((u) => <tr key={u.id}><td>{u.username}</td><td>{u.role}</td></tr>) : <tr><td colSpan={2}>No users found.</td></tr>}</tbody></table>
+          <table><thead><tr><th>User</th><th>Role</th></tr></thead><tbody>{loading ? <tr><td colSpan={2}>Loading...</td></tr> : users.length ? users.map((u) => <tr key={u.id}><td>{u.username}</td><td>{u.role}</td></tr>) : <tr><td colSpan={2}>No users found.</td></tr>}</tbody></table>
         </div>
 
         <div className="panel split-panel"><h3>API & Security</h3>
           <div className="form-grid"><input placeholder="Token name" value={newTokenName} onChange={(e) => setNewTokenName(e.target.value)} /><button type="button" onClick={createToken}>Create API Key</button></div>
           {createdToken ? <textarea readOnly value={`Copy now (shown once): ${createdToken}`} /> : null}
-          <table><thead><tr><th>Name</th><th>Prefix</th><th>Status</th><th>Action</th></tr></thead><tbody>{loading ? <tr><td colSpan={4}><span className="skel skel-row" /></td></tr> : tokens.length ? tokens.map((tk) => <tr key={tk.id}><td>{tk.name}</td><td>{tk.token_prefix}</td><td>{tk.is_active ? "active" : "disabled"}</td><td><button type="button" onClick={() => toggleToken(tk.id, tk.is_active)}>{tk.is_active ? "Disable" : "Enable"}</button></td></tr>) : <tr><td colSpan={4}>No API keys found.</td></tr>}</tbody></table>
+          <table><thead><tr><th>Name</th><th>Prefix</th><th>Status</th><th>Action</th></tr></thead><tbody>{loading ? <tr><td colSpan={4}>Loading...</td></tr> : tokens.length ? tokens.map((tk) => <tr key={tk.id}><td>{tk.name}</td><td>{tk.token_prefix}</td><td>{tk.is_active ? "active" : "disabled"}</td><td><button type="button" onClick={() => toggleToken(tk.id, tk.is_active)}>{tk.is_active ? "Disable" : "Enable"}</button></td></tr>) : <tr><td colSpan={4}>No API keys found.</td></tr>}</tbody></table>
         </div>
       </section>
 
@@ -271,9 +271,10 @@ export default function AdminPage() {
 
       <section className="panel"><h3>Data Tools / DB Health</h3>
         <div className="tiny">
-          {loading ? <span className="skel skel-row" /> : `Status: ${health.status} | DB Size: ${health.db_size} | DB Time: ${fmt(health.db_time)} | Admin Audit Logs: ${health.audit_log_entries}`}
+          {loading ? "Loading..." : `Status: ${health.status} | DB Size: ${health.db_size} | DB Time: ${fmt(health.db_time)} | Admin Audit Logs: ${health.audit_log_entries}`}
         </div>
       </section>
     </main>
   );
 }
+

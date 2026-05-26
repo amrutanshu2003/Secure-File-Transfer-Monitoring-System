@@ -227,11 +227,11 @@ export default function Home() {
       <section className="row">
         <div className="card metric-card">
           <div className="metric-head">Total Events <span className="live-dot live-green" aria-label="Live events" /></div>
-          <div className="value">{loading ? <span className="skel skel-text" /> : summary.total_events}</div>
+          <div className="value">{summary.total_events}</div>
         </div>
         <div className="card metric-card">
           <div className="metric-head">Total Alerts <span className="live-dot live-red" aria-label="Live alerts" /></div>
-          <div className="value danger">{loading ? <span className="skel skel-text" /> : summary.total_alerts}</div>
+          <div className="value danger">{summary.total_alerts}</div>
         </div>
       </section>
       {loadError ? <section className="panel"><div className="danger">{loadError}</div></section> : null}
@@ -268,12 +268,7 @@ export default function Home() {
         <table>
           <thead><tr><th>Type</th><th>Count</th></tr></thead>
           <tbody>
-            {loading ? (
-              <>
-                <tr><td colSpan={2}><span className="skel skel-row" /></td></tr>
-                <tr><td colSpan={2}><span className="skel skel-row" /></td></tr>
-              </>
-            ) : summary.event_type_counts.length ? summary.event_type_counts.map((item) => (
+            {loading ? <tr><td colSpan={2}>Loading...</td></tr> : summary.event_type_counts.length ? summary.event_type_counts.map((item) => (
               <tr key={item.action_type}><td>{item.action_type}</td><td>{item.c}</td></tr>
             )) : <tr><td colSpan={2}>No events yet.</td></tr>}
           </tbody>
@@ -285,12 +280,7 @@ export default function Home() {
         <table>
           <thead><tr><th>Time (IST)</th><th>Violation</th><th>User</th><th>File</th></tr></thead>
           <tbody>
-            {loading ? (
-              <>
-                <tr><td colSpan={4}><span className="skel skel-row" /></td></tr>
-                <tr><td colSpan={4}><span className="skel skel-row" /></td></tr>
-              </>
-            ) : alerts.length ? alerts.slice(0, visibleAlerts).map((a) => (
+            {loading ? <tr><td colSpan={4}>Loading...</td></tr> : alerts.length ? alerts.slice(0, visibleAlerts).map((a) => (
               <tr key={a.id}>
                 <td>{fmt(a.ts)}</td>
                 <td className="danger">{a.violation}</td>
@@ -315,12 +305,7 @@ export default function Home() {
         <table>
           <thead><tr><th>Time (IST)</th><th>Action</th><th>File</th><th>User</th><th>From</th><th>To</th></tr></thead>
           <tbody>
-            {loading ? (
-              <>
-                <tr><td colSpan={6}><span className="skel skel-row" /></td></tr>
-                <tr><td colSpan={6}><span className="skel skel-row" /></td></tr>
-              </>
-            ) : events.length ? events.slice(0, visibleEvents).map((e) => (
+            {loading ? <tr><td colSpan={6}>Loading...</td></tr> : events.length ? events.slice(0, visibleEvents).map((e) => (
               <tr key={e.id}>
                 <td>{fmt(e.ts)}</td>
                 <td>{e.action_type}</td>
