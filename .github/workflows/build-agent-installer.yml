@@ -8,6 +8,9 @@ on:
       - "installer/**"
       - ".github/workflows/build-agent-installer.yml"
 
+permissions:
+  contents: write
+
 jobs:
   build-windows-installer:
     runs-on: windows-latest
@@ -50,3 +53,13 @@ jobs:
           name: SFTMSAgentSetup
           path: installer/output/SFTMSAgentSetup.exe
           if-no-files-found: error
+
+      - name: Publish Direct EXE Release Asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-agent
+          name: SFTMS Agent Latest
+          body: Latest SFTMS Agent installer build.
+          files: installer/output/SFTMSAgentSetup.exe
+          make_latest: true
+          prerelease: false
