@@ -217,11 +217,11 @@ export default function Home() {
 
       <section className="row">
         <div className="card metric-card">
-          <div>Total Events</div>
+          <div className="metric-head">Total Events <span className="live-pill live-green">LIVE</span></div>
           <div className="value">{loading ? <span className="skel skel-text" /> : summary.total_events}</div>
         </div>
         <div className="card metric-card">
-          <div>Total Alerts</div>
+          <div className="metric-head">Total Alerts <span className="live-pill live-red">LIVE</span></div>
           <div className="value danger">{loading ? <span className="skel skel-text" /> : summary.total_alerts}</div>
         </div>
       </section>
