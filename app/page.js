@@ -18,49 +18,55 @@ function getUserKey() {
 }
 
 export default function Home() {
+  const PAGE_SIZE = 100;
   const howToVideoUrl =
     process.env.NEXT_PUBLIC_HOW_TO_USE_VIDEO_URL ||
     "/videos/how%20to%20use_Secure%20File%20Transfer%20Monitoring.mp4";
   const [summary, setSummary] = useState({ total_events: 0, total_alerts: 0, event_type_counts: [] });
   const [events, setEvents] = useState([]);
   const [alerts, setAlerts] = useState([]);
+  const [eventsOffset, setEventsOffset] = useState(0);
+  const [alertsOffset, setAlertsOffset] = useState(0);
+  const [hasMoreEvents, setHasMoreEvents] = useState(true);
+  const [hasMoreAlerts, setHasMoreAlerts] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [showHowToModal, setShowHowToModal] = useState(false);
   const [userKey, setUserKey] = useState("");
   const [lastUsername, setLastUsername] = useState("");
   const [historyCutoff, setHistoryCutoff] = useState(null);
 
-  const load = async () => {
-    const [s, e, a] = await Promise.all([
-      fetch("/api/summary", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/events", { cache: "no-store" }).then((r) => r.json()),
-      fetch("/api/alerts", { cache: "no-store" }).then((r) => r.json())
-    ]);
+  const applyCutoff = (items) => {
     const cutoffMs = historyCutoff ? new Date(historyCutoff).getTime() : 0;
-    const filteredEvents = cutoffMs ? e.filter((x) => new Date(x.ts).getTime() >= cutoffMs) : e;
-    const filteredAlerts = cutoffMs ? a.filter((x) => new Date(x.ts).getTime() >= cutoffMs) : a;
-    const countsMap = filteredEvents.reduce((acc, item) => {
-      const k = item.action_type || "unknown";
-      acc[k] = (acc[k] || 0) + 1;
-      return acc;
-    }, {});
-    const event_type_counts = Object.entries(countsMap).map(([action_type, c]) => ({ action_type, c }));
+    return cutoffMs ? items.filter((x) => new Date(x.ts).getTime() >= cutoffMs) : items;
+  };
 
-    if (!cutoffMs) {
-      setSummary({
-        total_events: s.total_events || 0,
-        total_alerts: s.total_alerts || 0,
-        event_type_counts: s.event_type_counts || []
-      });
-    } else {
-      setSummary({
-        total_events: filteredEvents.length,
-        total_alerts: filteredAlerts.length,
-        event_type_counts
-      });
-    }
-    setEvents(filteredEvents);
-    setAlerts(filteredAlerts);
+  const loadSummary = async () => {
+    const s = await fetch("/api/summary", { cache: "no-store" }).then((r) => r.json());
+    setSummary({
+      total_events: s.total_events || 0,
+      total_alerts: s.total_alerts || 0,
+      event_type_counts: s.event_type_counts || []
+    });
+  };
+
+  const loadEventsPage = async (offset, replace = false) => {
+    const e = await fetch(`/api/events?limit=${PAGE_SIZE}&offset=${offset}`, { cache: "no-store" }).then((r) => r.json());
+    const filtered = applyCutoff(e);
+    setEvents((prev) => (replace ? filtered : [...prev, ...filtered]));
+    setEventsOffset(offset + PAGE_SIZE);
+    setHasMoreEvents(e.length === PAGE_SIZE);
+  };
+
+  const loadAlertsPage = async (offset, replace = false) => {
+    const a = await fetch(`/api/alerts?limit=${PAGE_SIZE}&offset=${offset}`, { cache: "no-store" }).then((r) => r.json());
+    const filtered = applyCutoff(a);
+    setAlerts((prev) => (replace ? filtered : [...prev, ...filtered]));
+    setAlertsOffset(offset + PAGE_SIZE);
+    setHasMoreAlerts(a.length === PAGE_SIZE);
+  };
+
+  const load = async () => {
+    await Promise.all([loadSummary(), loadEventsPage(0, true), loadAlertsPage(0, true)]);
   };
 
   const savePreferences = async (payload) => {
@@ -127,6 +133,12 @@ export default function Home() {
     const nowIso = new Date().toISOString();
     localStorage.setItem("sftms_history_cutoff", nowIso);
     setHistoryCutoff(nowIso);
+    setEvents([]);
+    setAlerts([]);
+    setEventsOffset(0);
+    setAlertsOffset(0);
+    setHasMoreEvents(true);
+    setHasMoreAlerts(true);
   };
 
   const statusLabel = useMemo(() => (darkMode ? "Dark" : "Light"), [darkMode]);
@@ -258,6 +270,11 @@ export default function Home() {
             )) : <tr><td colSpan={4}>No alerts yet.</td></tr>}
           </tbody>
         </table>
+        {hasMoreAlerts ? (
+          <div style={{ marginTop: 10 }}>
+            <button type="button" onClick={() => loadAlertsPage(alertsOffset)}>Load More Alerts</button>
+          </div>
+        ) : null}
       </section>
 
       <section className="panel">
@@ -277,6 +294,11 @@ export default function Home() {
             )) : <tr><td colSpan={6}>No events yet.</td></tr>}
           </tbody>
         </table>
+        {hasMoreEvents ? (
+          <div style={{ marginTop: 10 }}>
+            <button type="button" onClick={() => loadEventsPage(eventsOffset)}>Load More Events</button>
+          </div>
+        ) : null}
       </section>
 
       <footer className="footer">
