@@ -135,29 +135,30 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="panel">
-        <h3>One-Click Full-System Agent Setup</h3>
-        <div className="tiny">Download EXE and run once. The agent installs, starts in the background, and auto-runs at startup.</div>
-        <div style={{ marginTop: 10 }}>
-          <a href="/api/download-agent" className="download-btn">Download Agent</a>
+      <section className="split-row">
+        <div className="panel split-panel">
+          <h3>One-Click Full-System Agent Setup</h3>
+          <div className="tiny">Download EXE and run once. The agent installs, starts in the background, and auto-runs at startup.</div>
+          <div style={{ marginTop: 10 }}>
+            <a href="/api/download-agent" className="download-btn">Download Agent</a>
+          </div>
+          <table style={{ marginTop: 12 }}>
+            <thead><tr><th>Step</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Download Agent EXE.</td></tr>
+              <tr><td>2</td><td>Run installer once. Monitoring starts automatically in background.</td></tr>
+              <tr><td>3</td><td>Verify events and alerts are updating in real time on the dashboard.</td></tr>
+            </tbody>
+          </table>
         </div>
-        <table style={{ marginTop: 12 }}>
-          <thead><tr><th>Step</th><th>Action</th></tr></thead>
-          <tbody>
-            <tr><td>1</td><td>Download Agent EXE.</td></tr>
-            <tr><td>2</td><td>Run installer once. Monitoring starts automatically in background.</td></tr>
-            <tr><td>3</td><td>Verify events and alerts are updating in real time on the dashboard.</td></tr>
-          </tbody>
-        </table>
-      </section>
 
-      <section className="panel">
-        <h3>How To Use (Video)</h3>
-        <div className="tiny">Play the quick setup walkthrough.</div>
-        <div className="video-wrap">
-          <video controls preload="metadata" className="help-video">
-            <source src="/videos/how-to-use.mp4" type="video/mp4" />
-          </video>
+        <div className="panel split-panel">
+          <h3>How To Use</h3>
+          <div className="video-wrap">
+            <video controls preload="metadata" className="help-video">
+              <source src="/videos/how-to-use.mp4" type="video/mp4" />
+            </video>
+          </div>
         </div>
       </section>
 

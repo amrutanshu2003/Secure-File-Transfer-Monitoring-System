@@ -281,6 +281,18 @@ tbody tr:nth-child(even) {
   background: #000;
 }
 
+.split-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.split-panel {
+  margin-bottom: 0;
+  min-height: 360px;
+}
+
 @media (max-width: 760px) {
   .brand {
     font-size: 1.3rem;
@@ -298,5 +310,9 @@ tbody tr:nth-child(even) {
 
   .footer {
     flex-direction: column;
+  }
+
+  .split-row {
+    grid-template-columns: 1fr;
   }
 }
