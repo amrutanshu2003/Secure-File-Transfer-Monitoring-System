@@ -152,6 +152,16 @@ export default function Home() {
       </section>
 
       <section className="panel">
+        <h3>How To Use (Video)</h3>
+        <div className="tiny">Play the quick setup walkthrough.</div>
+        <div className="video-wrap">
+          <video controls preload="metadata" className="help-video">
+            <source src="/videos/how-to-use.mp4" type="video/mp4" />
+          </video>
+        </div>
+      </section>
+
+      <section className="panel">
         <h3>Event Type Counts</h3>
         <table>
           <thead><tr><th>Type</th><th>Count</th></tr></thead>
