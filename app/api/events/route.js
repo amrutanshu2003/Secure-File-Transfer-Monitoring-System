@@ -12,7 +12,7 @@ export async function GET() {
     SELECT id, ts, action_type, file_name, source_path, destination_path, username, hash_value, violations
     FROM file_events
     ORDER BY id DESC
-    LIMIT 100
+    LIMIT 10000
   `;
   return NextResponse.json(rows);
 }

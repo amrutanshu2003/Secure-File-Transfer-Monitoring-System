@@ -12,7 +12,7 @@ export async function GET() {
     FROM alerts a
     LEFT JOIN file_events e ON e.id = a.event_id
     ORDER BY a.id DESC
-    LIMIT 100
+    LIMIT 10000
   `;
   return NextResponse.json(rows);
 }
