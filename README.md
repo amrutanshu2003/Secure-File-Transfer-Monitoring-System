@@ -62,6 +62,13 @@ npm run dev
   - `public/videos/how-to-use.mp4`
 - Dashboard auto-shows this video in the **How To Use (Video)** section.
 
+Large video note (GitHub 100MB limit):
+- If video is over 100MB, do not commit it to git.
+- Host video externally (Cloudinary, S3/R2, Drive direct link with proper streaming URL, etc.).
+- Set Vercel env var:
+  - `NEXT_PUBLIC_HOW_TO_USE_VIDEO_URL=<your_public_video_url>`
+- UI will use this URL automatically.
+
 ## EXE Auto Build (GitHub Actions)
 The repository includes a workflow that builds `SFTMSAgentSetup.exe` automatically.
 

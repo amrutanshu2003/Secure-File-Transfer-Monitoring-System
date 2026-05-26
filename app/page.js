@@ -18,6 +18,9 @@ function getUserKey() {
 }
 
 export default function Home() {
+  const howToVideoUrl =
+    process.env.NEXT_PUBLIC_HOW_TO_USE_VIDEO_URL ||
+    "/videos/how%20to%20use_Secure%20File%20Transfer%20Monitoring.mp4";
   const [summary, setSummary] = useState({ total_events: 0, total_alerts: 0, event_type_counts: [] });
   const [events, setEvents] = useState([]);
   const [alerts, setAlerts] = useState([]);
@@ -153,7 +156,7 @@ export default function Home() {
           <h3>How To Use</h3>
           <div className="video-wrap video-shell">
             <video controls preload="metadata" className="help-video">
-              <source src="/videos/how-to-use.mp4" type="video/mp4" />
+              <source src={howToVideoUrl} type="video/mp4" />
             </video>
           </div>
         </div>
