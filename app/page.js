@@ -46,11 +46,10 @@ export default function Home() {
   };
 
   const loadSummary = async () => {
-    if (historyCutoff) {
-      setSummary({ total_events: 0, total_alerts: 0, event_type_counts: [] });
-      return;
-    }
-    const s = await fetch("/api/summary", { cache: "no-store" }).then((r) => r.json());
+    const summaryUrl = historyCutoff
+      ? `/api/summary?since=${encodeURIComponent(historyCutoff)}`
+      : "/api/summary";
+    const s = await fetch(summaryUrl, { cache: "no-store" }).then((r) => r.json());
     setSummary({
       total_events: s.total_events || 0,
       total_alerts: s.total_alerts || 0,
