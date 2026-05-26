@@ -57,6 +57,11 @@ npm run dev
    - Event type counts
    - Recent alerts/events (IST time)
 
+## How-To Video
+- Place walkthrough video at:
+  - `public/videos/how-to-use.mp4`
+- Dashboard auto-shows this video in the **How To Use (Video)** section.
+
 ## EXE Auto Build (GitHub Actions)
 The repository includes a workflow that builds `SFTMSAgentSetup.exe` automatically.
 
