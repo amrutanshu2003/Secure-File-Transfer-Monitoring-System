@@ -68,14 +68,15 @@ export default function Home() {
   };
 
   const load = async () => {
-    setLoading(true);
+    const isInitialLoad = events.length === 0 && alerts.length === 0;
+    if (isInitialLoad) setLoading(true);
     setLoadError("");
     try {
       await Promise.all([loadSummary(), loadEventsPage(0, true), loadAlertsPage(0, true)]);
     } catch (err) {
       setLoadError("Unable to load realtime data. Please retry.");
     } finally {
-      setLoading(false);
+      if (isInitialLoad) setLoading(false);
     }
   };
 

@@ -30,7 +30,8 @@ export default function AdminPage() {
   const [createdToken, setCreatedToken] = useState("");
 
   const load = async () => {
-    setLoading(true);
+    const isInitialLoad = events.length === 0 && alerts.length === 0;
+    if (isInitialLoad) setLoading(true);
     setLoadError("");
     try {
       const [o, e, a, ep, p, r, s, u, t, h, c] = await Promise.all([
@@ -61,7 +62,7 @@ export default function AdminPage() {
     } catch (err) {
       setLoadError("Unable to load admin data. Check server/DB connection.");
     } finally {
-      setLoading(false);
+      if (isInitialLoad) setLoading(false);
     }
   };
 
