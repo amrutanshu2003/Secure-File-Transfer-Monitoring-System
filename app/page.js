@@ -74,7 +74,11 @@ export default function Home() {
     if (!loadedOnce) setLoading(true);
     setLoadError("");
     try {
-      await Promise.all([loadSummary(), loadEventsPage(0, true), loadAlertsPage(0, true)]);
+      const results = await Promise.allSettled([loadSummary(), loadEventsPage(0, true), loadAlertsPage(0, true)]);
+      const hasFailure = results.some((r) => r.status === "rejected");
+      if (hasFailure) {
+        setLoadError("Some realtime sections failed to load. Counts are still updated.");
+      }
       setLoadedOnce(true);
     } catch (err) {
       setLoadError("Unable to load realtime data. Please retry.");
@@ -155,6 +159,7 @@ export default function Home() {
     setHasMoreAlerts(true);
     setVisibleEvents(8);
     setVisibleAlerts(8);
+    loadSummary();
   };
 
   const statusLabel = useMemo(() => (darkMode ? "Dark" : "Light"), [darkMode]);
