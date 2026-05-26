@@ -268,7 +268,12 @@ export default function Home() {
         <table>
           <thead><tr><th>Type</th><th>Count</th></tr></thead>
           <tbody>
-            {summary.event_type_counts.length ? summary.event_type_counts.map((item) => (
+            {loading ? (
+              <>
+                <tr><td colSpan={2}><span className="skel skel-row" /></td></tr>
+                <tr><td colSpan={2}><span className="skel skel-row" /></td></tr>
+              </>
+            ) : summary.event_type_counts.length ? summary.event_type_counts.map((item) => (
               <tr key={item.action_type}><td>{item.action_type}</td><td>{item.c}</td></tr>
             )) : <tr><td colSpan={2}>No events yet.</td></tr>}
           </tbody>
@@ -281,7 +286,10 @@ export default function Home() {
           <thead><tr><th>Time (IST)</th><th>Violation</th><th>User</th><th>File</th></tr></thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={4}>Loading alerts...</td></tr>
+              <>
+                <tr><td colSpan={4}><span className="skel skel-row" /></td></tr>
+                <tr><td colSpan={4}><span className="skel skel-row" /></td></tr>
+              </>
             ) : alerts.length ? alerts.slice(0, visibleAlerts).map((a) => (
               <tr key={a.id}>
                 <td>{fmt(a.ts)}</td>
@@ -308,7 +316,10 @@ export default function Home() {
           <thead><tr><th>Time (IST)</th><th>Action</th><th>File</th><th>User</th><th>From</th><th>To</th></tr></thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={6}>Loading events...</td></tr>
+              <>
+                <tr><td colSpan={6}><span className="skel skel-row" /></td></tr>
+                <tr><td colSpan={6}><span className="skel skel-row" /></td></tr>
+              </>
             ) : events.length ? events.slice(0, visibleEvents).map((e) => (
               <tr key={e.id}>
                 <td>{fmt(e.ts)}</td>
