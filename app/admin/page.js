@@ -119,6 +119,11 @@ export default function AdminPage() {
   const clearData = async () => {
     if (!window.confirm("Clear all events and alerts?")) return;
     await fetch("/api/clear", { method: "POST" });
+    setOverview(emptyOverview);
+    setEvents([]);
+    setAlerts([]);
+    setEndpoints([]);
+    setReports({ daily_events: [], daily_alerts: [], top_violations: [] });
     load();
   };
 

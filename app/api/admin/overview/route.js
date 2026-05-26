@@ -3,6 +3,7 @@ import { sql } from "@vercel/postgres";
 import { initDb } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET() {
   await initDb();
@@ -11,7 +12,12 @@ export async function GET() {
     sql`SELECT COUNT(*)::int AS c FROM file_events`,
     sql`SELECT COUNT(*)::int AS c FROM alerts`,
     sql`SELECT COUNT(*)::int AS c FROM monitored_endpoints`,
-    sql`SELECT COUNT(*)::int AS c FROM alert_cases WHERE status <> 'resolved'`,
+    sql`
+      SELECT COUNT(*)::int AS c
+      FROM alerts a
+      LEFT JOIN alert_cases c ON c.alert_id = a.id
+      WHERE COALESCE(c.status, 'open') <> 'resolved'
+    `,
     sql`SELECT severity, COUNT(*)::int AS c FROM alerts GROUP BY severity ORDER BY c DESC`,
     sql`SELECT violation, COUNT(*)::int AS c FROM alerts GROUP BY violation ORDER BY c DESC LIMIT 5`,
     sql`SELECT action_type, COUNT(*)::int AS c FROM file_events WHERE ts >= NOW() - INTERVAL '24 hours' GROUP BY action_type ORDER BY c DESC`
