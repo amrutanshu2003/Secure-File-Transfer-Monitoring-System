@@ -37,6 +37,7 @@ export default function Home() {
   const [lastUsername, setLastUsername] = useState("");
   const [historyCutoff, setHistoryCutoff] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadedOnce, setLoadedOnce] = useState(false);
   const [loadError, setLoadError] = useState("");
 
   const applyCutoff = (items) => {
@@ -74,15 +75,15 @@ export default function Home() {
   };
 
   const load = async () => {
-    const isInitialLoad = events.length === 0 && alerts.length === 0;
-    if (isInitialLoad) setLoading(true);
+    if (!loadedOnce) setLoading(true);
     setLoadError("");
     try {
       await Promise.all([loadSummary(), loadEventsPage(0, true), loadAlertsPage(0, true)]);
+      setLoadedOnce(true);
     } catch (err) {
       setLoadError("Unable to load realtime data. Please retry.");
     } finally {
-      if (isInitialLoad) setLoading(false);
+      if (!loadedOnce) setLoading(false);
     }
   };
 
@@ -124,7 +125,8 @@ export default function Home() {
 
   useEffect(() => {
     load();
-    return undefined;
+    const id = setInterval(load, 5000);
+    return () => clearInterval(id);
   }, [historyCutoff]);
 
   useEffect(() => {
@@ -268,7 +270,7 @@ export default function Home() {
         <table>
           <thead><tr><th>Type</th><th>Count</th></tr></thead>
           <tbody>
-            {loading ? <tr><td colSpan={2}>Loading...</td></tr> : summary.event_type_counts.length ? summary.event_type_counts.map((item) => (
+            {loading && !loadedOnce ? <tr><td colSpan={2}>Loading...</td></tr> : summary.event_type_counts.length ? summary.event_type_counts.map((item) => (
               <tr key={item.action_type}><td>{item.action_type}</td><td>{item.c}</td></tr>
             )) : <tr><td colSpan={2}>No events yet.</td></tr>}
           </tbody>
@@ -280,7 +282,7 @@ export default function Home() {
         <table>
           <thead><tr><th>Time (IST)</th><th>Violation</th><th>User</th><th>File</th></tr></thead>
           <tbody>
-            {loading ? <tr><td colSpan={4}>Loading...</td></tr> : alerts.length ? alerts.slice(0, visibleAlerts).map((a) => (
+            {loading && !loadedOnce ? <tr><td colSpan={4}>Loading...</td></tr> : alerts.length ? alerts.slice(0, visibleAlerts).map((a) => (
               <tr key={a.id}>
                 <td>{fmt(a.ts)}</td>
                 <td className="danger">{a.violation}</td>
@@ -305,7 +307,7 @@ export default function Home() {
         <table>
           <thead><tr><th>Time (IST)</th><th>Action</th><th>File</th><th>User</th><th>From</th><th>To</th></tr></thead>
           <tbody>
-            {loading ? <tr><td colSpan={6}>Loading...</td></tr> : events.length ? events.slice(0, visibleEvents).map((e) => (
+            {loading && !loadedOnce ? <tr><td colSpan={6}>Loading...</td></tr> : events.length ? events.slice(0, visibleEvents).map((e) => (
               <tr key={e.id}>
                 <td>{fmt(e.ts)}</td>
                 <td>{e.action_type}</td>
